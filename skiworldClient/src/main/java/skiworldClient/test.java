@@ -1,8 +1,10 @@
 package skiworldClient;
 
 public class test {
- //aagggadksds
+ 
 	int id1;
+
 	String a = " iheb";
-	String inaahahaha="iheb";
+	String inaahahaha="iheb2";
+
 }
