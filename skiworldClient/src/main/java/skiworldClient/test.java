@@ -2,5 +2,6 @@ package skiworldClient;
 
 public class test {
  //aagggadksds
-	int id;
+	int id1;
+	String a = " affa";
 }
