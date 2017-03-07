@@ -4,5 +4,5 @@ public class test {
  //aagggadksds
 	int id1;
 	String a = " iheb";
-	String inaa;
+	String inaahahaha="iheb";
 }
