@@ -1,31 +1,27 @@
 package GUISkiWorld;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import java.awt.BorderLayout;
-import javax.swing.JTextField;
 import java.awt.Color;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.swing.ImageIcon;
-import java.awt.SystemColor;
-import java.awt.Window;
-
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
 import entities.User;
 import exceptions.MoreThanOneResultException;
 import exceptions.NoResultFoundException;
 import services.UserCrudEJBRemote;
-
-import java.awt.Font;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class Authentification {
 
@@ -34,6 +30,7 @@ public class Authentification {
 	private JTextField h_tf_passwordAuth;
 	public static User userConnected;
 	static Authentification window;
+
 	/**
 	 * Launch the application.
 	 */
@@ -41,7 +38,7 @@ public class Authentification {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					 window = new Authentification();
+					window = new Authentification();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -61,6 +58,12 @@ public class Authentification {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		try {
+			UIManager.setLookAndFeel("com.jtattoo.plaf.aero.AeroLookAndFeel");
+
+		} catch (Exception e) {
+
+		}
 		frame = new JFrame();
 		frame.setBounds(100, 100, 728, 585);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -74,13 +77,13 @@ public class Authentification {
 		h_btnLogin.setFont(new Font("MS Reference Sans Serif", Font.BOLD, 16));
 		h_btnLogin.setBackground(UIManager.getColor("Button.light"));
 		h_btnLogin.setForeground(new Color(51, 51, 51));
-		h_btnLogin.setBounds(280, 354, 130, 40);
+		h_btnLogin.setBounds(280, 345, 130, 40);
 		panel.add(h_btnLogin);
 
 		h_tf_usernameAuth = new JTextField();
 		h_tf_usernameAuth.setHorizontalAlignment(SwingConstants.LEFT);
 		h_tf_usernameAuth.setFont(new Font("MS Reference Sans Serif", Font.BOLD, 18));
-		h_tf_usernameAuth.setBounds(280, 221, 276, 43);
+		h_tf_usernameAuth.setBounds(278, 213, 276, 43);
 		panel.add(h_tf_usernameAuth);
 		h_tf_usernameAuth.setColumns(10);
 
@@ -89,7 +92,7 @@ public class Authentification {
 		h_tf_passwordAuth.setToolTipText("Enter your password");
 		h_tf_passwordAuth.setHorizontalAlignment(SwingConstants.LEFT);
 		h_tf_passwordAuth.setColumns(10);
-		h_tf_passwordAuth.setBounds(280, 284, 276, 43);
+		h_tf_passwordAuth.setBounds(278, 274, 276, 43);
 		panel.add(h_tf_passwordAuth);
 
 		JButton h_btnRegister = new JButton("Register");
@@ -99,7 +102,7 @@ public class Authentification {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		h_btnRegister.setBounds(426, 354, 130, 40);
+		h_btnRegister.setBounds(424, 345, 130, 40);
 		panel.add(h_btnRegister);
 
 		JLabel lblNewLabel = new JLabel("");
@@ -107,7 +110,7 @@ public class Authentification {
 		lblNewLabel.setBackground(UIManager.getColor("Button.light"));
 		lblNewLabel.setIcon(new ImageIcon("C:\\Users\\Haythem\\Desktop\\authentification3.png"));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(0, 11, 718, 542);
+		lblNewLabel.setBounds(0, 0, 718, 546);
 		panel.add(lblNewLabel);
 
 		h_btnLogin.addActionListener(new ActionListener() {
@@ -125,24 +128,21 @@ public class Authentification {
 					if (!u1.getUsername().equals("")) {
 						if (u1.getPassword().equals(h_tf_passwordAuth.getText())) {
 							System.out.println("Login successful");
-							userConnected=u1;
-							//connected c = new connected();
+							userConnected = u1;
+							// connected c = new connected();
 							window.frame.setVisible(false);
 							connected.main(null);
-							
-						} else{
+
+						} else {
 							System.out.println("Login Failed");
-					}}
-					else
-					{
+						}
+					} else {
 						System.out.println("Null");
 					}
 				} catch (NamingException | MoreThanOneResultException | NoResultFoundException e1) {
 					// TODO Auto-generated catch block
 					System.out.println("User not found");
 				}
-
-				
 
 			}
 		});
