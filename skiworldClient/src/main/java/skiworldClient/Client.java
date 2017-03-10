@@ -17,6 +17,7 @@ public class Client {
 		User u = new User();
 		u.setUsername("test");
 		proxy.addUser(u);
+	//	GUISkiWorld.Authentification.userConnected;
 	}
 
 }
