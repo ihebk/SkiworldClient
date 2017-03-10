@@ -18,6 +18,14 @@
     <version>1.6.11</version>
 </dependency>
 
+<!-- https://mvnrepository.com/artifact/com.twilio.sdk/twilio -->
+<dependency>
+    <groupId>com.twilio.sdk</groupId>
+    <artifactId>twilio</artifactId>
+    <version>7.6.0</version>
+</dependency>
+
+
 	<dependency>
 	<groupId>edu.esprit.SkiWorld</groupId>
 		<artifactId>SkiWorld-ejb</artifactId>
