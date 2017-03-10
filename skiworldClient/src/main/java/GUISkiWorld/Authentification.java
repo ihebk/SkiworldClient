@@ -130,8 +130,18 @@ public class Authentification {
 							System.out.println("Login successful");
 							userConnected = u1;
 							// connected c = new connected();
-							window.frame.setVisible(false);
-							connected.main(null);
+							if(u1.getRole().equals("manager"))
+							{
+								window.frame.setVisible(false);
+								HomeManager.main(null);
+							}
+							if(u1.getRole().equals("admin"))
+							{
+								window.frame.setVisible(false);
+								HomeAdmin.main(null);
+							}
+							
+							
 
 						} else {
 							System.out.println("Login Failed");
