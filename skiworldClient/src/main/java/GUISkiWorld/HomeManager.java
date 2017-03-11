@@ -3,29 +3,26 @@ package GUISkiWorld;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Image;
-import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.ByteArrayInputStream;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.SQLException;
 
-import javax.ejb.Startup;
-import javax.imageio.ImageIO;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.sql.rowset.serial.SerialBlob;
 import javax.sql.rowset.serial.SerialException;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -33,44 +30,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 
 import contracts.HotelCrudEJBRemote;
+import contracts.ResortCrudEJBRemote;
 import entities.Hotel;
-import junit.framework.Test;
 import models.HotelModel;
 import skiworldClient.SMS;
-import skiworldClient.test;
-
-import javax.swing.ImageIcon;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
-import com.jgoodies.forms.layout.FormSpecs;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.Icon;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JTable;
-import javax.swing.border.LineBorder;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import javax.swing.border.SoftBevelBorder;
-import javax.swing.border.BevelBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-
-import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
-
-import javax.swing.ListSelectionModel;
-import javax.swing.JTextArea;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 
 public class HomeManager {
 
@@ -130,8 +99,8 @@ public class HomeManager {
 		ManagerGUI.getContentPane().setLayout(null);
 		ManagerGUI.getContentPane().setLayout(null);
 
-		// SMS.main(null);
-
+		HotelModel hm = new HotelModel();
+		//SMS.main(null, "+21624056027", "hello");
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBounds(0, 76, 768, 344);
 		ManagerGUI.getContentPane().add(tabbedPane);
@@ -144,7 +113,7 @@ public class HomeManager {
 		lblHotelName_i.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
 
 		JTextArea i_hoteldescription = new JTextArea();
-		i_hoteldescription.setBounds(139, 82, 204, 69);
+		i_hoteldescription.setBounds(139, 62, 204, 69);
 		panel_i.add(i_hoteldescription);
 
 		i_hotelname = new JTextField();
@@ -152,18 +121,23 @@ public class HomeManager {
 		i_hotelname.setColumns(10);
 
 		JLabel i_lblDescription = new JLabel("Description :");
-		i_lblDescription.setBounds(10, 82, 99, 25);
+		i_lblDescription.setBounds(10, 60, 99, 25);
 		i_lblDescription.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
 
 		JLabel i_lblCapacity = new JLabel("Capacity :");
-		i_lblCapacity.setBounds(10, 174, 99, 25);
+		i_lblCapacity.setBounds(10, 144, 99, 25);
 		i_lblCapacity.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
 
 		JSpinner i_hotelcapacity = new JSpinner();
-		i_hotelcapacity.setBounds(139, 178, 123, 20);
+		i_hotelcapacity.setBounds(139, 148, 123, 20);
+
+		JComboBox i_hotel_combo = new JComboBox();
+		i_hotel_combo.setBounds(139, 238, 113, 20);
+		panel_i.add(i_hotel_combo);
+		hm.fillResortComboBox(i_hotel_combo);
 
 		JLabel i_lblRating = new JLabel("Image :");
-		i_lblRating.setBounds(10, 226, 99, 25);
+		i_lblRating.setBounds(10, 186, 99, 25);
 		i_lblRating.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
 
 		JButton i_btnNewButton = new JButton("Add");
@@ -176,11 +150,14 @@ public class HomeManager {
 					ctx = new InitialContext();
 					HotelCrudEJBRemote proxy_hotel = (HotelCrudEJBRemote) ctx
 							.lookup("/SkiWorld-ear/SkiWorld-ejb/HotelCrudEJB!contracts.HotelCrudEJBRemote");
+					ResortCrudEJBRemote proxy_resort = (ResortCrudEJBRemote) ctx
+							.lookup("/SkiWorld-ear/SkiWorld-ejb/ResortCrudEJB!contracts.ResortCrudEJBRemote");
 
 					Hotel hotel = new Hotel();
 					hotel.setDescription(i_hoteldescription.getText());
 					hotel.setName(i_hotelname.getText());
 					hotel.setCapacity((Integer) i_hotelcapacity.getValue());
+					hotel.setResort(proxy_resort.findResortByLabel(i_hotel_combo.getSelectedItem().toString()));
 
 					File file = new File(image);
 					byte[] bFile = new byte[(int) file.length()];
@@ -236,15 +213,15 @@ public class HomeManager {
 				i_imagepath.setText(image);
 			}
 		});
-		i_chooseimage.setBounds(139, 229, 113, 23);
+		i_chooseimage.setBounds(139, 186, 113, 23);
 		panel_i.add(i_chooseimage);
 
 		i_imagepath = new JTextField();
-		i_imagepath.setBounds(262, 230, 148, 20);
+		i_imagepath.setBounds(261, 187, 148, 20);
 		panel_i.add(i_imagepath);
 		i_imagepath.setColumns(10);
 
-		JLabel i_imgdisplay = new JLabel("New label");
+		JLabel i_imgdisplay = new JLabel("");
 		i_imgdisplay.setBounds(516, 187, 150, 130);
 		i_imgdisplay.setIcon((Icon) img_display);
 		panel_i.add(i_imgdisplay);
@@ -263,10 +240,10 @@ public class HomeManager {
 				row = hotelmodel.hotellist.get(index);
 
 				try {
-					FileOutputStream fos = new FileOutputStream("C:\\Games\\test\\new.jpg");
+					FileOutputStream fos = new FileOutputStream("src//main//resources//imgs//hotel.jpg");
 					fos.write(row.getImage());
 					fos.close();
-					ImageIcon imgThisImg1 = new ImageIcon("C:\\Games\\test\\new.jpg");
+					ImageIcon imgThisImg1 = new ImageIcon("src//main//resources//imgs//hotel.jpg");
 					Image image = imgThisImg1.getImage(); // transform it
 					Image newimg = image.getScaledInstance(150, 130, java.awt.Image.SCALE_SMOOTH); // scale
 																									// it
@@ -311,11 +288,14 @@ public class HomeManager {
 						ctx = new InitialContext();
 						HotelCrudEJBRemote proxy_hotel = (HotelCrudEJBRemote) ctx
 								.lookup("/SkiWorld-ear/SkiWorld-ejb/HotelCrudEJB!contracts.HotelCrudEJBRemote");
+						ResortCrudEJBRemote proxy_resort = (ResortCrudEJBRemote) ctx
+								.lookup("/SkiWorld-ear/SkiWorld-ejb/ResortCrudEJB!contracts.ResortCrudEJBRemote");
 						Hotel hotel = new Hotel();
 						hotel.setIdHotel(row.getIdHotel());
 						hotel.setDescription(i_hoteldescription.getText());
 						hotel.setName(i_hotelname.getText());
 						hotel.setCapacity((Integer) i_hotelcapacity.getValue());
+						hotel.setResort(proxy_resort.findResortByLabel(i_hotel_combo.getSelectedItem().toString()));
 
 						File file = new File(image);
 						byte[] bFile = new byte[(int) file.length()];
@@ -378,8 +358,13 @@ public class HomeManager {
 			}
 		});
 		i_remove.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		i_remove.setBounds(321, 290, 89, 23);
+		i_remove.setBounds(321, 288, 89, 23);
 		panel_i.add(i_remove);
+
+		JLabel lblResort = new JLabel("Resort :");
+		lblResort.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
+		lblResort.setBounds(10, 234, 99, 25);
+		panel_i.add(lblResort);
 
 		JLabel i_lblNewLabel_1 = new JLabel("New label");
 		i_lblNewLabel_1.setIcon(new ImageIcon("C:\\Users\\Iheb\\Desktop\\15755113534_f75fd1636c_k.jpg"));
@@ -391,7 +376,8 @@ public class HomeManager {
 		i_label.setIcon(new ImageIcon(
 				"C:\\Users\\Iheb\\Desktop\\Ski Freestyle Wallpaper High Definition 61942 5975 Wallpaper  Cool ....jpg"));
 
-		i_label.setBounds(0, 0, 768, 398);
+		i_label.setBounds(0, 0, 768, 420);
 		ManagerGUI.getContentPane().add(i_label);
+
 	}
 }

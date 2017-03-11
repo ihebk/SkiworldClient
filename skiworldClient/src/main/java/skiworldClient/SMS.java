@@ -6,14 +6,14 @@ import com.twilio.type.PhoneNumber;
 
 public class SMS {
 		// Find your Account Sid and Token at twilio.com/user/account
-		  public static final String ACCOUNT_SID = "AC41e09925f5224c358d64c7703217ab6d";
-		  public static final String AUTH_TOKEN = "2206d126c3a60b115fce51269e4f0ba0";
+		  public static final String ACCOUNT_SID = "ACb3dbe342d513746cc5aa376cd298935b";
+		  public static final String AUTH_TOKEN = "9b4e62c430071d7a7444ddb4a3c9f565";
 
-		  public static void main(String[] args) {
+		  public static void main(String[] args,String receiver,String text) {
 		    Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
 
-		    Message message = Message.creator(new PhoneNumber("0021624056027"),
-		        new PhoneNumber("00"), "This ").create();
+		    Message message = Message.creator(new PhoneNumber(receiver),
+		        new PhoneNumber("+12088744759"), text).create();
 
 		    System.out.println(message.getSid());
 		  }
