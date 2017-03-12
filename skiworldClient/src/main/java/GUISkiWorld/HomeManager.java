@@ -734,7 +734,7 @@ public class HomeManager {
 		panel_i_piste.add(i_pi_name);
 
 		JComboBox i_pi_typecombo = new JComboBox();
-		i_pi_typecombo.setModel(new DefaultComboBoxModel(new String[] { "Training", "Daily Activities" }));
+		i_pi_typecombo.setModel(new DefaultComboBoxModel(new String[] {"Training", "Daily Activities"}));
 		i_pi_typecombo.setBounds(139, 148, 113, 20);
 		panel_i_piste.add(i_pi_typecombo);
 

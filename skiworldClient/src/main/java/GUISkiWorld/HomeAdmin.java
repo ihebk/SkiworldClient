@@ -1,8 +1,11 @@
 package GUISkiWorld;
 
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -43,13 +46,23 @@ import businessDelegates.ResortBusinessDelegate;
 import businessDelegates.StoreBusinessDelegate;
 import entities.Resort;
 import entities.Store;
+import statUtil.CustomRenderer;
 import tableModels.ResortModel;
 import tableModels.StoreModel;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import org.eclipse.wb.swing.FocusTraversalOnArray;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PiePlot3D;
+import org.jfree.chart.renderer.category.CategoryItemRenderer;
+import org.jfree.data.general.DefaultPieDataset;
 
+import business.PisteBusiness;
+
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.table.DefaultTableModel;
@@ -67,7 +80,7 @@ public class HomeAdmin {
 	public Store rowSelectedStore;
 	public List<Resort> listStore;
 	private BufferedImage img_display;
-
+	public JPanel statTrackP;
 	/**
 	 * Launch the application.
 	 */
@@ -93,7 +106,7 @@ public class HomeAdmin {
 	 */
 	public HomeAdmin() throws NamingException, SQLException, IOException {
 		initialize();
-
+		statTrackFN();
 	}
 
 	/**
@@ -111,14 +124,14 @@ public class HomeAdmin {
 		}
 
 		ManagerGUI = new JFrame();
-		ManagerGUI.setBounds(100, 100, 784, 459);
+		ManagerGUI.setBounds(300, 300, 1100,700);
 		ManagerGUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		ManagerGUI.getContentPane().setLayout(null);
 		ManagerGUI.getContentPane().setLayout(null);
 
 		// SMS.main(null, "+21624056027", "hello");
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBounds(0, 76, 768, 344);
+		tabbedPane.setBounds(0, 76, 1074, 469);
 		ManagerGUI.getContentPane().add(tabbedPane);
 
 		JPanel resorts = new JPanel();
@@ -216,12 +229,12 @@ public class HomeAdmin {
 							resortLocation.setText("");
 							ResortModel resortmodel = new ResortModel();
 							resortTable.setModel(resortmodel.getResortModel());
-						}else{
-							 JDialog dialog = new JDialog();
-				                dialog.setAlwaysOnTop(true);
-				                JOptionPane.showMessageDialog(dialog, "Adding Error");
+						} else {
+							JDialog dialog = new JDialog();
+							dialog.setAlwaysOnTop(true);
+							JOptionPane.showMessageDialog(dialog, "Adding Error");
 						}
-							
+
 					} catch (NamingException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -295,7 +308,7 @@ public class HomeAdmin {
 					r.setLocation(resortLocation.getText());
 					if ((resortName.getText().length() == 0) || (resortDescription.getText().length() == 0)
 							|| (resortLocation.getText().length() == 0)) {
-						
+
 						System.out.println("ffffffffffff");
 						if (resortName.getText().length() == 0)
 							lblResortName.setForeground(Color.RED);
@@ -305,27 +318,27 @@ public class HomeAdmin {
 							lblAdresREs.setForeground(Color.RED);
 
 					} else {
-					try {
-						if(!rdb.getResortProxy().updateResort(r)){
-						ResortModel resortmodel = new ResortModel();
-						resortTable.setModel(resortmodel.getResortModel());
-						lblResortName.setForeground(Color.BLACK);
-						t_lblDescription.setForeground(Color.BLACK);
-						lblAdresREs.setForeground(Color.BLACK);
-						addResort.setEnabled(true);
-						resortName.setText("");
-						resortDescription.setText("");
-						resortLocation.setText("");
-						rowSelectedResort=null;
-						}else{
-							 JDialog dialog = new JDialog();
-				                dialog.setAlwaysOnTop(true);
-				                JOptionPane.showMessageDialog(dialog, "Updating Error");
+						try {
+							if (!rdb.getResortProxy().updateResort(r)) {
+								ResortModel resortmodel = new ResortModel();
+								resortTable.setModel(resortmodel.getResortModel());
+								lblResortName.setForeground(Color.BLACK);
+								t_lblDescription.setForeground(Color.BLACK);
+								lblAdresREs.setForeground(Color.BLACK);
+								addResort.setEnabled(true);
+								resortName.setText("");
+								resortDescription.setText("");
+								resortLocation.setText("");
+								rowSelectedResort = null;
+							} else {
+								JDialog dialog = new JDialog();
+								dialog.setAlwaysOnTop(true);
+								JOptionPane.showMessageDialog(dialog, "Updating Error");
+							}
+						} catch (NamingException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
 						}
-					} catch (NamingException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
 					}
 				}
 
@@ -354,18 +367,18 @@ public class HomeAdmin {
 					r.setCountry(countryCmb.getSelectedItem().toString());
 					r.setLocation(resortLocation.getText());
 					try {
-						if(!rdb.getResortProxy().removeResort(r)){
-						ResortModel resortmodel = new ResortModel();
-						resortTable.setModel(resortmodel.getResortModel());
-						addResort.setEnabled(true);
-						resortName.setText("");
-						resortDescription.setText("");
-						resortLocation.setText("");
-						rowSelectedResort=null;
-						}else{
-							 JDialog dialog = new JDialog();
-				                dialog.setAlwaysOnTop(true);
-				                JOptionPane.showMessageDialog(dialog, "Removal Error");
+						if (!rdb.getResortProxy().removeResort(r)) {
+							ResortModel resortmodel = new ResortModel();
+							resortTable.setModel(resortmodel.getResortModel());
+							addResort.setEnabled(true);
+							resortName.setText("");
+							resortDescription.setText("");
+							resortLocation.setText("");
+							rowSelectedResort = null;
+						} else {
+							JDialog dialog = new JDialog();
+							dialog.setAlwaysOnTop(true);
+							JOptionPane.showMessageDialog(dialog, "Removal Error");
 						}
 					} catch (NamingException e1) {
 						// TODO Auto-generated catch block
@@ -381,8 +394,20 @@ public class HomeAdmin {
 
 		JLabel i_lblNewLabel_1 = new JLabel("");
 		i_lblNewLabel_1.setIcon(new ImageIcon("C:\\Users\\Iheb\\Desktop\\15755113534_f75fd1636c_k.jpg"));
-		i_lblNewLabel_1.setBounds(0, 0, 763, 316);
+		i_lblNewLabel_1.setBounds(0, 0, 763, 335);
 		resorts.add(i_lblNewLabel_1);
+
+		JPanel statPanel = new JPanel();
+		tabbedPane.addTab("Statistics", null, statPanel, null);
+		statPanel.setLayout(null);
+
+		JPanel statCountResort = new JPanel();
+		statCountResort.setBounds(0, 5, 206, 311);
+		statPanel.add(statCountResort);
+
+		statTrackP = new JPanel();
+		statTrackP.setBounds(216, 5, 843, 425);
+		statPanel.add(statTrackP);
 		StoreModel storeModel = new StoreModel();
 		JPanel panel = new JPanel();
 		JLabel i_label = new JLabel("New label");
@@ -393,4 +418,41 @@ public class HomeAdmin {
 
 	}
 
+	public void statTrackFN() throws NamingException {
+		PisteBusiness pb = new PisteBusiness();
+		int t1 = 0, t2 = 0;
+		String ty1 = "Training", ty2 = "Daily Activities";
+		DefaultPieDataset dataset1 = new DefaultPieDataset();
+		for (int i = 0; i < pb.getProxy().findAllPistes().size(); i++) {
+			if (pb.getProxy().findAllPistes().get(i).getType().equals(ty1))
+				t1++;
+			else
+				t2++;
+		}
+		dataset1.setValue(ty1, t1);
+		dataset1.setValue(ty2, t2);
+		JFreeChart chart1 = ChartFactory.createPieChart3D("Tracks per Type", dataset1,
+				true, true, true);
+	
+		PiePlot3D p = (PiePlot3D) chart1.getPlot();
+
+		final CategoryItemRenderer renderer = new CustomRenderer(new Paint[] { Color.red,
+				Color.blue, Color.green, Color.yellow, Color.orange, Color.cyan, Color.magenta, Color.blue });
+		ChartPanel chartp1 = new ChartPanel(chart1);
+		chartp1.setBounds(172, 0, 614, 420);
+//		chartp1.setMaximumDrawWidth(200000);
+//		chartp1.setMaximumDrawHeight(300000);
+		chartp1.setVisible(true);
+		statTrackP.removeAll();
+		statTrackP.setLayout(null);
+		
+		statTrackP.add(chartp1);
+		GridBagLayout gbl_chartp1 = new GridBagLayout();
+		gbl_chartp1.columnWidths = new int[]{0};
+		gbl_chartp1.rowHeights = new int[]{0};
+		gbl_chartp1.columnWeights = new double[]{Double.MIN_VALUE};
+		gbl_chartp1.rowWeights = new double[]{Double.MIN_VALUE};
+		chartp1.setLayout(gbl_chartp1);
+		
+	}
 }
