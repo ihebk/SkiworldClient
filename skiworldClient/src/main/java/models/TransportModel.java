@@ -28,16 +28,16 @@ public DefaultTableModel transportModel() throws SQLException, IOException, Nami
 	
 		transporttlist = trBusiness.getProxy().findAllTransport();
 
-			String col[] = { "Type", "Description", "Booking Price", "Capacity","Resort" };
+			String col[] = { "Type", "Description", "Price", "Capacity","Resort" };
 			transportModel = new DefaultTableModel(col, 0);
 			for (int i = 0; i < transporttlist.size(); i++) {
 				String Type = transporttlist.get(i).getType();
 				String Description =transporttlist.get(i).getDescription();
-				float Booking_Price = transporttlist.get(i).getBookingPrice();
+				float Price = transporttlist.get(i).getBookingPrice();
 				int Capacity = transporttlist.get(i).getCapacity();
 				String Resort= transporttlist.get(i).getResort().getName();
 
-				Object[] data = { Type, Description, Booking_Price, Capacity,Resort };
+				Object[] data = { Type, Description, Price, Capacity,Resort };
 				transportModel.addRow(data);
 
 			}
