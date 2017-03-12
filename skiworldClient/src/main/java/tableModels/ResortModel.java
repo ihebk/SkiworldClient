@@ -16,7 +16,7 @@ public class ResortModel {
 	listResorts =rbd.getResortProxy().findAllResort();
 	}
 	public DefaultTableModel getResortModel(){
-		String col[] = { "Nom", "Email", "Téléphone" };
+		String col[] = { "Name", "Country", "Adresse" };
 		DefaultTableModel tableModel = new DefaultTableModel(col, 0);
 
 		for (int i = 0; i < listResorts.size(); i++) {
@@ -30,6 +30,8 @@ public class ResortModel {
 		return tableModel;
 	}
 	
-	
+	public List<Resort> getResortList(){
+		return listResorts;
+	}
 
 }
