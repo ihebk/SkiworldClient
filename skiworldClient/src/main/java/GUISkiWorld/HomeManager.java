@@ -1182,6 +1182,7 @@ public class HomeManager {
 					JDialog dialog = new JDialog();
 					dialog.setAlwaysOnTop(true);
 					JOptionPane.showMessageDialog(dialog, "Please select a Store to edit");
+			
 				} else {
 					Store r = new Store();
 					int testPH = 0, testEm = 0;
