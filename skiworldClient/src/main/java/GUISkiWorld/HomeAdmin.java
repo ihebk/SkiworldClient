@@ -62,11 +62,12 @@ public class HomeAdmin {
 	private String image;
 	private JTable resortTable;
 	public Resort rowSelectedResort;
-	
+	public JLabel lblAdresREs;
 	public List<Resort> listResort;
 	public Store rowSelectedStore;
 	public List<Resort> listStore;
 	private BufferedImage img_display;
+
 	/**
 	 * Launch the application.
 	 */
@@ -92,7 +93,7 @@ public class HomeAdmin {
 	 */
 	public HomeAdmin() throws NamingException, SQLException, IOException {
 		initialize();
-	
+
 	}
 
 	/**
@@ -126,7 +127,6 @@ public class HomeAdmin {
 		JLabel lblResortName = new JLabel("Resort name :");
 		lblResortName.setBounds(10, 27, 99, 25);
 		lblResortName.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-
 		JTextArea resortDescription = new JTextArea();
 		resortDescription.setBounds(139, 62, 204, 69);
 		resorts.add(resortDescription);
@@ -135,9 +135,9 @@ public class HomeAdmin {
 		resortName.setBounds(139, 31, 149, 20);
 		resortName.setColumns(10);
 
-		JLabel i_lblDescription = new JLabel("Description :");
-		i_lblDescription.setBounds(10, 60, 99, 25);
-		i_lblDescription.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
+		JLabel t_lblDescription = new JLabel("Description :");
+		t_lblDescription.setBounds(10, 60, 99, 25);
+		t_lblDescription.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
 
 		JComboBox countryCmb = new JComboBox();
 		countryCmb.setModel(new DefaultComboBoxModel(new String[] { "Afghanistan", "Albania", "Algeria", "Andorra",
@@ -170,10 +170,14 @@ public class HomeAdmin {
 		countryCmb.setBounds(138, 162, 113, 20);
 		resorts.add(countryCmb);
 
+		lblAdresREs = new JLabel("Adresse :");
+		lblAdresREs.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
+		lblAdresREs.setBounds(10, 207, 99, 25);
+		resorts.add(lblAdresREs);
+
 		JLabel i_lblRating = new JLabel("Country :");
 		i_lblRating.setBounds(10, 162, 99, 25);
 		i_lblRating.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-
 		JButton addResort = new JButton("Add");
 		addResort.setBounds(39, 288, 99, 23);
 		addResort.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
@@ -182,19 +186,46 @@ public class HomeAdmin {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ResortBusinessDelegate rdb = new ResortBusinessDelegate();
-
+				Boolean test = false;
 				Resort r = new Resort();
-				r.setName(resortName.getText());
-				r.setDescription(resortDescription.getText());
-				r.setCountry(countryCmb.getSelectedItem().toString());
-				r.setLocation(resortLocation.getText());
-				try {
-					rdb.getResortProxy().addResort(r);
-					ResortModel resortmodel = new ResortModel();
-					resortTable.setModel(resortmodel.getResortModel());
-				} catch (NamingException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+
+				if ((resortName.getText().length() == 0) || (resortDescription.getText().length() == 0)
+						|| (resortLocation.getText().length() == 0)) {
+					test = true;
+					System.out.println("ffffffffffff");
+					if (resortName.getText().length() == 0)
+						lblResortName.setForeground(Color.RED);
+					if (resortDescription.getText().length() == 0)
+						t_lblDescription.setForeground(Color.RED);
+					if (resortLocation.getText().length() == 0)
+						lblAdresREs.setForeground(Color.RED);
+
+				} else {
+					try {
+
+						r.setName(resortName.getText());
+						r.setDescription(resortDescription.getText());
+						r.setCountry(countryCmb.getSelectedItem().toString());
+						r.setLocation(resortLocation.getText());
+						if (!rdb.getResortProxy().addResort(r)) {
+							lblResortName.setForeground(Color.BLACK);
+							t_lblDescription.setForeground(Color.BLACK);
+							lblAdresREs.setForeground(Color.BLACK);
+							resortName.setText("");
+							resortDescription.setText("");
+							resortLocation.setText("");
+							ResortModel resortmodel = new ResortModel();
+							resortTable.setModel(resortmodel.getResortModel());
+						}else{
+							 JDialog dialog = new JDialog();
+				                dialog.setAlwaysOnTop(true);
+				                JOptionPane.showMessageDialog(dialog, "Adding Error");
+						}
+							
+					} catch (NamingException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 
 			}
@@ -203,7 +234,7 @@ public class HomeAdmin {
 		resorts.setLayout(null);
 		resorts.add(lblResortName);
 		resorts.add(resortName);
-		resorts.add(i_lblDescription);
+		resorts.add(t_lblDescription);
 		resorts.add(i_lblRating);
 		resorts.add(addResort);
 
@@ -244,7 +275,7 @@ public class HomeAdmin {
 				addResort.setEnabled(false);
 			}
 		});
-		
+
 		JButton editResort = new JButton("Edit");
 		editResort.addActionListener(new ActionListener() {
 
@@ -262,17 +293,39 @@ public class HomeAdmin {
 					r.setDescription(resortDescription.getText());
 					r.setCountry(countryCmb.getSelectedItem().toString());
 					r.setLocation(resortLocation.getText());
+					if ((resortName.getText().length() == 0) || (resortDescription.getText().length() == 0)
+							|| (resortLocation.getText().length() == 0)) {
+						
+						System.out.println("ffffffffffff");
+						if (resortName.getText().length() == 0)
+							lblResortName.setForeground(Color.RED);
+						if (resortDescription.getText().length() == 0)
+							t_lblDescription.setForeground(Color.RED);
+						if (resortLocation.getText().length() == 0)
+							lblAdresREs.setForeground(Color.RED);
+
+					} else {
 					try {
-						rdb.getResortProxy().updateResort(r);
+						if(!rdb.getResortProxy().updateResort(r)){
 						ResortModel resortmodel = new ResortModel();
 						resortTable.setModel(resortmodel.getResortModel());
+						lblResortName.setForeground(Color.BLACK);
+						t_lblDescription.setForeground(Color.BLACK);
+						lblAdresREs.setForeground(Color.BLACK);
 						addResort.setEnabled(true);
 						resortName.setText("");
 						resortDescription.setText("");
 						resortLocation.setText("");
+						rowSelectedResort=null;
+						}else{
+							 JDialog dialog = new JDialog();
+				                dialog.setAlwaysOnTop(true);
+				                JOptionPane.showMessageDialog(dialog, "Updating Error");
+						}
 					} catch (NamingException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
+					}
 					}
 				}
 
@@ -301,13 +354,19 @@ public class HomeAdmin {
 					r.setCountry(countryCmb.getSelectedItem().toString());
 					r.setLocation(resortLocation.getText());
 					try {
-						rdb.getResortProxy().removeResort(r);
+						if(!rdb.getResortProxy().removeResort(r)){
 						ResortModel resortmodel = new ResortModel();
 						resortTable.setModel(resortmodel.getResortModel());
 						addResort.setEnabled(true);
 						resortName.setText("");
 						resortDescription.setText("");
 						resortLocation.setText("");
+						rowSelectedResort=null;
+						}else{
+							 JDialog dialog = new JDialog();
+				                dialog.setAlwaysOnTop(true);
+				                JOptionPane.showMessageDialog(dialog, "Removal Error");
+						}
 					} catch (NamingException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -320,24 +379,18 @@ public class HomeAdmin {
 		removeResort.setBounds(321, 288, 89, 23);
 		resorts.add(removeResort);
 
-		JLabel lblResort = new JLabel("Adresse :");
-		lblResort.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		lblResort.setBounds(10, 207, 99, 25);
-		resorts.add(lblResort);
-
 		JLabel i_lblNewLabel_1 = new JLabel("");
 		i_lblNewLabel_1.setIcon(new ImageIcon("C:\\Users\\Iheb\\Desktop\\15755113534_f75fd1636c_k.jpg"));
 		i_lblNewLabel_1.setBounds(0, 0, 763, 316);
 		resorts.add(i_lblNewLabel_1);
 		StoreModel storeModel = new StoreModel();
 		JPanel panel = new JPanel();
-
 		JLabel i_label = new JLabel("New label");
 		i_label.setIcon(new ImageIcon(
 				"C:\\Users\\Iheb\\Desktop\\Ski Freestyle Wallpaper High Definition 61942 5975 Wallpaper  Cool ....jpg"));
 		i_label.setBounds(0, 0, 768, 420);
 		ManagerGUI.getContentPane().add(i_label);
-		
+
 	}
-	
+
 }
