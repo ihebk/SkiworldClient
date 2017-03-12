@@ -3,7 +3,7 @@ package businessDelegates;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import contracts.ResortCrudRemote;
+import contracts.ResortCrudEJBRemote;
 import contracts.StoreCrudRemote;
 
 public class StoreBusinessDelegate {

@@ -8,6 +8,8 @@ import javax.swing.table.DefaultTableModel;
 import businessDelegates.ResortBusinessDelegate;
 import entities.Resort;
 
+
+
 public class ResortModel {
 	private List<Resort> listResorts;
 

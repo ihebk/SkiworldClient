@@ -3,13 +3,13 @@ package businessDelegates;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import contracts.ResortCrudRemote;
+import contracts.ResortCrudEJBRemote;
 
 public class ResortBusinessDelegate {
-	public ResortCrudRemote getResortProxy() throws NamingException{
+	public ResortCrudEJBRemote getResortProxy() throws NamingException{
 	InitialContext ctx = new InitialContext();
-	Object object = ctx.lookup("/SkiWorld-ear/SkiWorld-ejb/ResortCrud!contracts.ResortCrudRemote");
-	ResortCrudRemote proxy = (ResortCrudRemote) object;
+	Object object = ctx.lookup("/SkiWorld-ear/SkiWorld-ejb/ResortCrudEJB!contracts.ResortCrudEJBRemote");
+	ResortCrudEJBRemote proxy = (ResortCrudEJBRemote) object;
 	return proxy;
 	}
 }
