@@ -35,12 +35,12 @@ public class PisteModel {
 			String Name = pistelist.get(i).getName();
 			String Description = pistelist.get(i).getDescription();
 			String Type = pistelist.get(i).getType();
-//			for (int j = 0; j < resortlist.size(); j++){
-//				if (resortlist.get(j).getPiste().getIdPiste()== pistelist.get(i).getIdPiste()){
-//				 Resort = pistelist.get(i).getResort().getName();}
-//				
-//
-//			}
+
+				 Resort = pistelist.get(i).getResort().getName();
+				
+
+			
+
 
 			Object[] data = { Name, Description, Type, Resort };
 			pisteModel.addRow(data);
