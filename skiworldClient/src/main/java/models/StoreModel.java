@@ -1,12 +1,12 @@
-package tableModels;
+package models;
 
 import java.util.List;
 
 import javax.naming.NamingException;
 import javax.swing.table.DefaultTableModel;
 
-import businessDelegates.ResortBusinessDelegate;
-import businessDelegates.StoreBusinessDelegate;
+import business.ResortBusinessDelegate;
+import business.StoreBusinessDelegate;
 import entities.Resort;
 import entities.Store;
 
@@ -14,8 +14,8 @@ public class StoreModel {
 	private List<Store> listStores;
 
 	public StoreModel() throws NamingException {
-		StoreBusinessDelegate rbd = new StoreBusinessDelegate();
-	listStores =rbd.getStoreProxy().findAllStore();
+
+	listStores =StoreBusinessDelegate.findAllStores();
 	}
 	public DefaultTableModel getStoreModel(){
 		String col[] = { "Name", "Email", "Phone","Resort" };

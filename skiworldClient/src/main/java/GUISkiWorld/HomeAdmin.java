@@ -42,13 +42,12 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 
-import businessDelegates.ResortBusinessDelegate;
-import businessDelegates.StoreBusinessDelegate;
 import entities.Resort;
 import entities.Store;
+import models.ResortModel;
+import models.StoreModel;
 import statUtil.CustomRenderer;
-import tableModels.ResortModel;
-import tableModels.StoreModel;
+import statUtil.Statistic;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -56,11 +55,16 @@ import org.eclipse.wb.swing.FocusTraversalOnArray;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PiePlot3D;
+import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 
 import business.PisteBusiness;
+import business.ResortBusinessDelegate;
+import business.StoreBusinessDelegate;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -80,7 +84,8 @@ public class HomeAdmin {
 	public Store rowSelectedStore;
 	public List<Resort> listStore;
 	private BufferedImage img_display;
-	public JPanel statTrackP;
+	public JPanel statTrackP, statCountResort;
+
 	/**
 	 * Launch the application.
 	 */
@@ -107,6 +112,7 @@ public class HomeAdmin {
 	public HomeAdmin() throws NamingException, SQLException, IOException {
 		initialize();
 		statTrackFN();
+		statRes();
 	}
 
 	/**
@@ -124,7 +130,7 @@ public class HomeAdmin {
 		}
 
 		ManagerGUI = new JFrame();
-		ManagerGUI.setBounds(300, 300, 1100,700);
+		ManagerGUI.setBounds(300, 300, 1100, 700);
 		ManagerGUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		ManagerGUI.getContentPane().setLayout(null);
 		ManagerGUI.getContentPane().setLayout(null);
@@ -198,7 +204,7 @@ public class HomeAdmin {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ResortBusinessDelegate rdb = new ResortBusinessDelegate();
+				
 				Boolean test = false;
 				Resort r = new Resort();
 
@@ -220,7 +226,7 @@ public class HomeAdmin {
 						r.setDescription(resortDescription.getText());
 						r.setCountry(countryCmb.getSelectedItem().toString());
 						r.setLocation(resortLocation.getText());
-						if (!rdb.getResortProxy().addResort(r)) {
+						ResortBusinessDelegate.addResort(r);
 							lblResortName.setForeground(Color.BLACK);
 							t_lblDescription.setForeground(Color.BLACK);
 							lblAdresREs.setForeground(Color.BLACK);
@@ -229,11 +235,7 @@ public class HomeAdmin {
 							resortLocation.setText("");
 							ResortModel resortmodel = new ResortModel();
 							resortTable.setModel(resortmodel.getResortModel());
-						} else {
-							JDialog dialog = new JDialog();
-							dialog.setAlwaysOnTop(true);
-							JOptionPane.showMessageDialog(dialog, "Adding Error");
-						}
+							statRes();
 
 					} catch (NamingException e1) {
 						// TODO Auto-generated catch block
@@ -319,7 +321,7 @@ public class HomeAdmin {
 
 					} else {
 						try {
-							if (!rdb.getResortProxy().updateResort(r)) {
+							ResortBusinessDelegate.updateResort(r);
 								ResortModel resortmodel = new ResortModel();
 								resortTable.setModel(resortmodel.getResortModel());
 								lblResortName.setForeground(Color.BLACK);
@@ -329,12 +331,10 @@ public class HomeAdmin {
 								resortName.setText("");
 								resortDescription.setText("");
 								resortLocation.setText("");
+								statRes();
 								rowSelectedResort = null;
-							} else {
-								JDialog dialog = new JDialog();
-								dialog.setAlwaysOnTop(true);
-								JOptionPane.showMessageDialog(dialog, "Updating Error");
-							}
+								
+							
 						} catch (NamingException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -367,7 +367,7 @@ public class HomeAdmin {
 					r.setCountry(countryCmb.getSelectedItem().toString());
 					r.setLocation(resortLocation.getText());
 					try {
-						if (!rdb.getResortProxy().removeResort(r)) {
+						ResortBusinessDelegate.removeResort(r);
 							ResortModel resortmodel = new ResortModel();
 							resortTable.setModel(resortmodel.getResortModel());
 							addResort.setEnabled(true);
@@ -375,11 +375,7 @@ public class HomeAdmin {
 							resortDescription.setText("");
 							resortLocation.setText("");
 							rowSelectedResort = null;
-						} else {
-							JDialog dialog = new JDialog();
-							dialog.setAlwaysOnTop(true);
-							JOptionPane.showMessageDialog(dialog, "Removal Error");
-						}
+							statRes();
 					} catch (NamingException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -401,12 +397,12 @@ public class HomeAdmin {
 		tabbedPane.addTab("Statistics", null, statPanel, null);
 		statPanel.setLayout(null);
 
-		JPanel statCountResort = new JPanel();
-		statCountResort.setBounds(0, 5, 206, 311);
+		statCountResort = new JPanel();
+		statCountResort.setBounds(0, 5, 504, 482);
 		statPanel.add(statCountResort);
 
 		statTrackP = new JPanel();
-		statTrackP.setBounds(216, 5, 843, 425);
+		statTrackP.setBounds(502, 5, 557, 358);
 		statPanel.add(statTrackP);
 		StoreModel storeModel = new StoreModel();
 		JPanel panel = new JPanel();
@@ -431,28 +427,81 @@ public class HomeAdmin {
 		}
 		dataset1.setValue(ty1, t1);
 		dataset1.setValue(ty2, t2);
-		JFreeChart chart1 = ChartFactory.createPieChart3D("Tracks per Type", dataset1,
-				true, true, true);
-	
+		JFreeChart chart1 = ChartFactory.createPieChart3D("Tracks per Type", dataset1, true, true, true);
+
 		PiePlot3D p = (PiePlot3D) chart1.getPlot();
 
-		final CategoryItemRenderer renderer = new CustomRenderer(new Paint[] { Color.red,
-				Color.blue, Color.green, Color.yellow, Color.orange, Color.cyan, Color.magenta, Color.blue });
+		final CategoryItemRenderer renderer = new CustomRenderer(new Paint[] { Color.red, Color.blue, Color.green,
+				Color.yellow, Color.orange, Color.cyan, Color.magenta, Color.blue });
 		ChartPanel chartp1 = new ChartPanel(chart1);
-		chartp1.setBounds(172, 0, 614, 420);
-//		chartp1.setMaximumDrawWidth(200000);
-//		chartp1.setMaximumDrawHeight(300000);
+		chartp1.setBounds(23, 11, 524, 336);
 		chartp1.setVisible(true);
 		statTrackP.removeAll();
 		statTrackP.setLayout(null);
-		
+
 		statTrackP.add(chartp1);
 		GridBagLayout gbl_chartp1 = new GridBagLayout();
-		gbl_chartp1.columnWidths = new int[]{0};
-		gbl_chartp1.rowHeights = new int[]{0};
-		gbl_chartp1.columnWeights = new double[]{Double.MIN_VALUE};
-		gbl_chartp1.rowWeights = new double[]{Double.MIN_VALUE};
+		gbl_chartp1.columnWidths = new int[] { 0 };
+		gbl_chartp1.rowHeights = new int[] { 0 };
+		gbl_chartp1.columnWeights = new double[] { Double.MIN_VALUE };
+		gbl_chartp1.rowWeights = new double[] { Double.MIN_VALUE };
 		chartp1.setLayout(gbl_chartp1);
-		
+
+	}
+
+	public void statRes() throws NamingException {
+	
+		int nbc = 0;
+		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		List<Resort> l1 = new ArrayList<>();
+		List<Resort> l2 = new ArrayList<>();
+		l1 = ResortBusinessDelegate.findAllResorts();
+		l2 = ResortBusinessDelegate.findAllResorts();
+		List<Statistic>st = new ArrayList<>();
+		for (int i = 0; i < l1.size(); i++) {
+			nbc = 0;
+			for (int j = 0; j < l2.size(); j++) {
+
+				if (l1.get(i).getCountry().equals(l2.get(j).getCountry())) {
+					nbc++;
+					l2.get(j).setCountry("hh");
+				}
+			}
+			if (nbc != 0) {
+				Statistic sat = new Statistic();
+				sat.setY(nbc);
+				sat.setX(l1.get(i).getCountry());
+				st.add(sat);
+			}
+
+		}
+
+
+		for (int i = 0; i < st.size(); i++) {
+
+			if ((st.get(i).getX() != null) && (st.get(i).getY() != 0))
+				dataset.setValue(st.get(i).getY(), " ", st.get(i).getX());
+
+		}
+		JFreeChart chart = ChartFactory.createBarChart3D("Resorts per Country", "Countries", "Resorts", dataset,
+				PlotOrientation.VERTICAL, true, false, true);
+		CategoryPlot catplot = chart.getCategoryPlot();
+		final CategoryItemRenderer renderer = new CustomRenderer(new Paint[] { Color.red, Color.blue, Color.green,
+				Color.yellow, Color.orange, Color.cyan, Color.magenta, Color.blue });
+		chart.setBackgroundPaint(Color.WHITE);
+		catplot.setBackgroundPaint(Color.WHITE);
+		catplot.setRenderer(renderer);
+
+		statCountResort.setLayout(null);
+		ChartPanel chartp = new ChartPanel(chart);
+		chartp.setBounds(-11, 11, 515, 335);
+		statCountResort.add(chartp);
+		GridBagLayout gbl_chartp = new GridBagLayout();
+		gbl_chartp.columnWidths = new int[] { 0 };
+		gbl_chartp.rowHeights = new int[] { 0 };
+		gbl_chartp.columnWeights = new double[] { Double.MIN_VALUE };
+		gbl_chartp.rowWeights = new double[] { Double.MIN_VALUE };
+		chartp.setLayout(gbl_chartp);
+		statCountResort.validate();
 	}
 }

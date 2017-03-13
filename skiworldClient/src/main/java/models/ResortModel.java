@@ -1,11 +1,11 @@
-package tableModels;
+package models;
 
 import java.util.List;
 
 import javax.naming.NamingException;
 import javax.swing.table.DefaultTableModel;
 
-import businessDelegates.ResortBusinessDelegate;
+import business.ResortBusinessDelegate;
 import entities.Resort;
 
 
@@ -14,8 +14,8 @@ public class ResortModel {
 	private List<Resort> listResorts;
 
 	public ResortModel() throws NamingException {
-	ResortBusinessDelegate rbd = new ResortBusinessDelegate();
-	listResorts =rbd.getResortProxy().findAllResort();
+		
+	listResorts =ResortBusinessDelegate.findAllResorts();
 	}
 	public DefaultTableModel getResortModel(){
 		String col[] = { "Name", "Country", "Adresse" };

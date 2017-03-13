@@ -51,12 +51,8 @@ import javax.swing.border.Border;
 
 import org.eclipse.wb.swing.FocusTraversalOnArray;
 
-import businessDelegates.ResortBusinessDelegate;
-import businessDelegates.StoreBusinessDelegate;
 import entities.Resort;
 import entities.Store;
-import tableModels.ResortModel;
-import tableModels.StoreModel;
 
 import javax.naming.NamingException;
 import javax.swing.BorderFactory;
@@ -71,6 +67,8 @@ import javax.swing.UIManager;
 import business.HotelBusiness;
 import business.PisteBusiness;
 import business.ResortBusiness;
+import business.ResortBusinessDelegate;
+import business.StoreBusinessDelegate;
 import business.TransportBusiness;
 import contracts.HotelCrudEJBRemote;
 import contracts.ResortCrudEJBRemote;
@@ -79,6 +77,8 @@ import entities.Piste;
 import entities.Transport;
 import models.HotelModel;
 import models.PisteModel;
+import models.ResortModel;
+import models.StoreModel;
 import models.TransportModel;
 import skiworldClient.SMS;
 import javax.swing.table.DefaultTableModel;
@@ -734,7 +734,7 @@ public class HomeManager {
 		panel_i_piste.add(i_pi_name);
 
 		JComboBox i_pi_typecombo = new JComboBox();
-		i_pi_typecombo.setModel(new DefaultComboBoxModel(new String[] {"Training", "Daily Activities"}));
+		i_pi_typecombo.setModel(new DefaultComboBoxModel(new String[] { "Training", "Daily Activities" }));
 		i_pi_typecombo.setBounds(139, 148, 113, 20);
 		panel_i_piste.add(i_pi_typecombo);
 
@@ -1027,82 +1027,65 @@ public class HomeManager {
 		Stores.add(addStore);
 		addStore.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				StoreBusinessDelegate rdb = new StoreBusinessDelegate();
-				ResortBusinessDelegate res = new ResortBusinessDelegate();
 				Store r = new Store();
 				int testPH = 0, testEm = 0;
-
 				try {
-					r.setResort(res.getResortProxy().findAllResort().get(resortStore.getSelectedIndex()));
-				} catch (NamingException e2) {
-					// TODO Auto-generated catch block
-					e2.printStackTrace();
-				}
-				try {
-					for (int i = 0; i < rdb.getStoreProxy().findAllStore().size(); i++) {
-						if (rdb.getStoreProxy().findAllStore().get(i).getEmail().equals(emailStore.getText()))
+					r.setResort(ResortBusinessDelegate.findAllResorts().get(resortStore.getSelectedIndex()));
+					for (int i = 0; i < StoreBusinessDelegate.findAllStores().size(); i++) {
+						if (StoreBusinessDelegate.findAllStores().get(i).getEmail().equals(emailStore.getText()))
 							testEm = 1;
+					}
+
+					if ((storeName.getText().length() == 0) || (storeDescription.getText().length() == 0)
+							|| (storeLocation.getText().length() == 0) || (emailStore.getText().length() == 0)
+							|| (phoneStore.getText().length() == 0) || (testEm == 1)) {
+
+						if (storeName.getText().length() == 0)
+							lblStoreName.setForeground(Color.RED);
+						if (storeDescription.getText().length() == 0)
+							lblStoreDesc.setForeground(Color.RED);
+						if (storeLocation.getText().length() == 0)
+							lblStoreAdress.setForeground(Color.RED);
+						if (emailStore.getText().length() == 0)
+							lblEmailStore.setForeground(Color.RED);
+						if (phoneStore.getText().length() == 0)
+							lblPhoneStore.setForeground(Color.RED);
+						else {
+
+							for (int i = 0; i < StoreBusinessDelegate.findAllStores().size(); i++) {
+								if (StoreBusinessDelegate.findAllStores().get(i).getPhone() == Long
+										.parseLong(phoneStore.getText()))
+									lblAlreadyExistPhR.setVisible(true);
+							}
+						}
+						if (testEm == 1)
+							lblAlreadyExistEmR.setVisible(true);
+					} else {
+						r.setDescription(storeDescription.getText());
+						r.setEmail(emailStore.getText());
+						r.setLocation(storeLocation.getText());
+						r.setName(storeName.getText());
+						r.setPhone(Long.parseLong(phoneStore.getText()));
+						r.setResort(ResortBusinessDelegate.findAllResorts().get(resortStore.getSelectedIndex()));
+						StoreBusinessDelegate.addStore(r);
+						StoreModel storeModel = new StoreModel();
+						storeTable.setModel(storeModel.getStoreModel());
+						lblStoreName.setForeground(Color.BLACK);
+						lblStoreDesc.setForeground(Color.BLACK);
+						lblStoreAdress.setForeground(Color.BLACK);
+						lblEmailStore.setForeground(Color.BLACK);
+						lblPhoneStore.setForeground(Color.BLACK);
+						lblAlreadyExistEmR.setVisible(false);
+						lblAlreadyExistPhR.setVisible(false);
+						storeName.setText("");
+						storeDescription.setText("");
+						phoneStore.setText("");
+						storeLocation.setText("");
+						emailStore.setText("");
 					}
 				} catch (NamingException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				}
-
-				if ((storeName.getText().length() == 0) || (storeDescription.getText().length() == 0)
-						|| (storeLocation.getText().length() == 0) || (emailStore.getText().length() == 0)
-						|| (phoneStore.getText().length() == 0) || (testEm == 1)) {
-
-					if (storeName.getText().length() == 0)
-						lblStoreName.setForeground(Color.RED);
-					if (storeDescription.getText().length() == 0)
-						lblStoreDesc.setForeground(Color.RED);
-					if (storeLocation.getText().length() == 0)
-						lblStoreAdress.setForeground(Color.RED);
-					if (emailStore.getText().length() == 0)
-						lblEmailStore.setForeground(Color.RED);
-					if (phoneStore.getText().length() == 0)
-						lblPhoneStore.setForeground(Color.RED);
-					else {
-						try {
-							for (int i = 0; i < rdb.getStoreProxy().findAllStore().size(); i++) {
-								if (rdb.getStoreProxy().findAllStore().get(i).getPhone() == Long
-										.parseLong(phoneStore.getText()))
-									lblAlreadyExistPhR.setVisible(true);
-							}
-						} catch (NumberFormatException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} catch (NamingException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}
-
-					if (testEm == 1)
-						lblAlreadyExistEmR.setVisible(true);
-
-				} else {
-					try {
-						if (!rdb.getStoreProxy().addStore(r)) {
-							StoreModel storeModel = new StoreModel();
-							storeTable.setModel(storeModel.getStoreModel());
-							lblStoreName.setForeground(Color.BLACK);
-							lblStoreDesc.setForeground(Color.BLACK);
-							lblStoreAdress.setForeground(Color.BLACK);
-							lblEmailStore.setForeground(Color.BLACK);
-							lblPhoneStore.setForeground(Color.BLACK);
-							lblAlreadyExistEmR.setVisible(false);
-							lblAlreadyExistPhR.setVisible(false);
-							storeName.setText("");
-							storeDescription.setText("");
-							phoneStore.setText("");
-							storeLocation.setText("");
-							emailStore.setText("");
-						}
-					} catch (NamingException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
 				}
 
 			}
@@ -1159,6 +1142,7 @@ public class HomeManager {
 			public void mouseClicked(MouseEvent e) {
 				int index = storeTable.getSelectedRow();
 				StoreModel rt;
+
 				try {
 					rt = new StoreModel();
 					rowSelectedStore = rt.getStoreList().get(index);
@@ -1166,6 +1150,7 @@ public class HomeManager {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+
 				storeName.setText(rowSelectedStore.getName());
 				storeDescription.setText(rowSelectedStore.getDescription());
 				storeLocation.setText(rowSelectedStore.getLocation());
@@ -1182,25 +1167,14 @@ public class HomeManager {
 					JDialog dialog = new JDialog();
 					dialog.setAlwaysOnTop(true);
 					JOptionPane.showMessageDialog(dialog, "Please select a Store to edit");
-			
+
 				} else {
 					Store r = new Store();
-					int testPH = 0, testEm = 0;
-					StoreBusinessDelegate rdb = new StoreBusinessDelegate();
-					ResortBusinessDelegate res = new ResortBusinessDelegate();
-
 					try {
-						for (int i = 0; i < rdb.getStoreProxy().findAllStore().size(); i++) {
-							if (rdb.getStoreProxy().findAllStore().get(i).getEmail().equals(emailStore.getText()))
-								testEm = 1;
-							if (rdb.getStoreProxy().findAllStore().get(i).getPhone() == Long
-									.parseLong(phoneStore.getText()))
-								testPH = 1;
 
-						}
 						if ((storeName.getText().length() == 0) || (storeDescription.getText().length() == 0)
 								|| (storeLocation.getText().length() == 0) || (emailStore.getText().length() == 0)
-								|| (phoneStore.getText().length() == 0) || (testEm == 1) || (testPH == 1)) {
+								|| (phoneStore.getText().length() == 0)) {
 
 							if (storeName.getText().length() == 0)
 								lblStoreName.setForeground(Color.RED);
@@ -1212,10 +1186,7 @@ public class HomeManager {
 								lblEmailStore.setForeground(Color.RED);
 							if (phoneStore.getText().length() == 0)
 								lblPhoneStore.setForeground(Color.RED);
-							if (testPH == 1)
-								lblAlreadyExistPhR.setVisible(true);
-							if (testEm == 1)
-								lblAlreadyExistEmR.setVisible(true);
+
 						} else {
 							r.setIdStore(rowSelectedStore.getIdStore());
 							r.setName(storeName.getText());
@@ -1224,24 +1195,22 @@ public class HomeManager {
 							r.setLocation(storeLocation.getText());
 							r.setEmail(emailStore.getText());
 							r.setPhone(Long.parseLong(phoneStore.getText()));
-							r.setResort(res.getResortProxy().findAllResort().get(resortStore.getSelectedIndex()));
-							if (!rdb.getStoreProxy().updateStore(r)) {
-								StoreModel storemodel = new StoreModel();
-								storeTable.setModel(storemodel.getStoreModel());
-								addStore.setEnabled(true);
-								storeName.setText("");
-								storeDescription.setText("");
-								storeLocation.setText("");
-								phoneStore.setText("");
-								emailStore.setText("");
-								lblStoreName.setForeground(Color.BLACK);
-								lblStoreDesc.setForeground(Color.BLACK);
-								lblStoreAdress.setForeground(Color.BLACK);
-								lblEmailStore.setForeground(Color.BLACK);
-								lblPhoneStore.setForeground(Color.BLACK);
-								lblAlreadyExistEmR.setVisible(false);
-								lblAlreadyExistPhR.setVisible(false);
-							}
+							r.setResort(ResortBusinessDelegate.findAllResorts().get(resortStore.getSelectedIndex()));
+							StoreBusinessDelegate.updateStore(r);
+							StoreModel storemodel = new StoreModel();
+							storeTable.setModel(storemodel.getStoreModel());
+							addStore.setEnabled(true);
+							storeName.setText("");
+							storeDescription.setText("");
+							storeLocation.setText("");
+							phoneStore.setText("");
+							emailStore.setText("");
+							lblStoreName.setForeground(Color.BLACK);
+							lblStoreDesc.setForeground(Color.BLACK);
+							lblStoreAdress.setForeground(Color.BLACK);
+							lblEmailStore.setForeground(Color.BLACK);
+							lblPhoneStore.setForeground(Color.BLACK);
+
 						}
 					} catch (NamingException e1) {
 						// TODO Auto-generated catch block
@@ -1265,7 +1234,7 @@ public class HomeManager {
 					r.setIdStore(rowSelectedStore.getIdStore());
 					r = rowSelectedStore;
 					try {
-						rdb.getStoreProxy().removeStore(r);
+						StoreBusinessDelegate.removeStore(r);
 						StoreModel storemodel = new StoreModel();
 						storeTable.setModel(storemodel.getStoreModel());
 						addStore.setEnabled(true);
@@ -1287,9 +1256,9 @@ public class HomeManager {
 	}
 
 	public void fillCbResort() throws NamingException {
-		ResortBusinessDelegate bdr = new ResortBusinessDelegate();
+
 		List<Resort> list = new ArrayList<>();
-		list = bdr.getResortProxy().findAllResort();
+		list = ResortBusinessDelegate.findAllResorts();
 		for (Resort name : list)
 			resortStore.addItem(name.getName());
 
