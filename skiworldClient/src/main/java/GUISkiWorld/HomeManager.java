@@ -51,13 +51,14 @@ import skiworldClient.SMS;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.TabExpander;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.SpinnerNumberModel;
 
 public class HomeManager {
 
 	private JFrame ManagerGUI;
 	private JTextField i_hotelname;
 	private JTextField i_imagepath;
-	private String image;
+	private String image ;
 	private JTable i_table_hotel;
 	HotelModel hotelmodel = new HotelModel();
 	TransportModel transportmodel = new TransportModel();
@@ -72,7 +73,6 @@ public class HomeManager {
 	PisteBusiness pisteBusiness = new PisteBusiness();
 	private JTextField i_tr_path;
 	private JTable i_tr_table;
-	private JTextField i_tr_price;
 	private JTextField i_pi_name;
 	private JTextField i_pi_path;
 	private JTable i_pi_table;
@@ -139,10 +139,37 @@ public class HomeManager {
 		JTextArea i_hoteldescription = new JTextArea();
 		i_hoteldescription.setBounds(139, 62, 204, 69);
 		panel_i_hotel.add(i_hoteldescription);
+		JSpinner i_tr_price = new JSpinner();
+		i_tr_price.setModel(new SpinnerNumberModel(new Float(1), new Float(1), null, new Float(1)));
+		i_tr_price.setBounds(139, 207, 123, 20);
 
 		i_hotelname = new JTextField();
 		i_hotelname.setBounds(139, 31, 149, 20);
 		i_hotelname.setColumns(10);
+
+		JComboBox i_tr_type_combo = new JComboBox();
+		i_tr_type_combo.setModel(new DefaultComboBoxModel(new String[] { "Car", "JetSki", "Sky tram" }));
+		i_tr_type_combo.setBounds(139, 15, 204, 20);
+
+		JComboBox i_hotel_combo = new JComboBox();
+		i_hotel_combo.setBounds(139, 238, 113, 20);
+		panel_i_hotel.add(i_hotel_combo);
+		JComboBox i_tr_resort_combo = new JComboBox();
+		i_tr_resort_combo.setBounds(139, 238, 113, 20);
+		JComboBox i_pi_resortcombo = new JComboBox();
+		i_pi_resortcombo.setBounds(139, 238, 113, 20);
+
+		i_table_hotel = new JTable();
+		i_pi_table = new JTable();
+		i_tr_table = new JTable();
+
+		i_table_hotel.setModel(hotelmodel.hotelModel());
+		i_tr_table.setModel(transportmodel.transportModel());
+		i_pi_table.setModel(pistemodel.pisteModel());
+
+		hotelmodel.fillResortComboBox(i_hotel_combo);
+		pistemodel.fillResortComboBox(i_pi_resortcombo);
+		transportmodel.fillResortComboBox(i_tr_resort_combo);
 
 		JLabel i_lblDescription = new JLabel("Description :");
 		i_lblDescription.setBounds(10, 60, 99, 25);
@@ -153,13 +180,8 @@ public class HomeManager {
 		i_lblCapacity.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
 
 		JSpinner i_hotelcapacity = new JSpinner();
+		i_hotelcapacity.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
 		i_hotelcapacity.setBounds(139, 148, 123, 20);
-
-		JComboBox i_hotel_combo = new JComboBox();
-		i_hotel_combo.setBounds(139, 238, 113, 20);
-		panel_i_hotel.add(i_hotel_combo);
-	
-
 
 		JLabel i_lblRating = new JLabel("Image :");
 		i_lblRating.setBounds(10, 186, 99, 25);
@@ -170,6 +192,29 @@ public class HomeManager {
 		i_btnNewButton.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
 		i_btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+
+				if (i_hotelname.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Please Fill the name space");
+					return;
+				}
+				if (i_hoteldescription.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Please Fill the Description space");
+					return;
+				}
+				if (i_imagepath.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Please select a photo");
+					return;
+				}
+
+				for (int i = 0; i < hotelmodel.getAll().size(); i++) {
+
+					if (i_hotelname.getText().equals(hotelmodel.getAll().get(i).getName())) {
+						JOptionPane.showMessageDialog(null, "a Hotel with that name already exists");
+						return;
+
+					}
+
+				}
 
 				Hotel hotel = new Hotel();
 				hotel.setDescription(i_hoteldescription.getText());
@@ -196,6 +241,7 @@ public class HomeManager {
 				hotel.setImage(bFile);
 
 				try {
+
 					hotelBusiness.getProxy().addHotel(hotel);
 
 					i_table_hotel.setModel(hotelmodel.hotelModel());
@@ -222,15 +268,26 @@ public class HomeManager {
 				JFileChooser ch = new JFileChooser();
 				ch.showOpenDialog(null);
 				File f = ch.getSelectedFile();
-				image = f.getAbsolutePath();
+				if (f != null) {
+					image = f.getAbsolutePath();
 
-				i_imagepath.setText(image);
+					i_imagepath.setText(image);
+				}
+
+				else {
+					
+					image= "src//main//resources//imgs//defaulthotel.jpg";
+					i_imagepath.setText(image);
+				}
+
 			}
+
 		});
 		i_chooseimage.setBounds(139, 186, 113, 23);
 		panel_i_hotel.add(i_chooseimage);
 
 		i_imagepath = new JTextField();
+		i_imagepath.setEditable(false);
 		i_imagepath.setBounds(261, 187, 148, 20);
 		panel_i_hotel.add(i_imagepath);
 		i_imagepath.setColumns(10);
@@ -245,8 +302,8 @@ public class HomeManager {
 		i_scrollPane.setBounds(424, 11, 329, 165);
 		panel_i_hotel.add(i_scrollPane);
 
-		i_table_hotel = new JTable();
 		i_table_hotel.addMouseListener(new MouseAdapter() {
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
 
@@ -284,7 +341,6 @@ public class HomeManager {
 
 		});
 
-		i_table_hotel.setModel(hotelmodel.hotelModel());
 		i_scrollPane.setViewportView(i_table_hotel);
 
 		JButton i_edit = new JButton("Edit");
@@ -296,6 +352,29 @@ public class HomeManager {
 				if (index != -1) {
 
 					hotelrow = hotelmodel.hotellist.get(index);
+
+					if (i_hotelname.getText().equals("")) {
+						JOptionPane.showMessageDialog(null, "Please Fill the name space");
+						return;
+					}
+					if (i_hoteldescription.getText().equals("")) {
+						JOptionPane.showMessageDialog(null, "Please Fill the Description space");
+						return;
+					}
+					if (i_imagepath.getText().equals("")) {
+						JOptionPane.showMessageDialog(null, "Please select a photo");
+						return;
+					}
+
+					for (int i = 0; i < hotelmodel.getAll().size(); i++) {
+
+						if (i_hotelname.getText().equals(hotelmodel.getAll().get(i).getName())) {
+							JOptionPane.showMessageDialog(null, "a Hotel with that name already exists");
+							return;
+
+						}
+
+					}
 
 					Hotel hotel = new Hotel();
 					hotel.setIdHotel(hotelrow.getIdHotel());
@@ -374,10 +453,11 @@ public class HomeManager {
 		lblResort.setBounds(10, 234, 99, 25);
 		panel_i_hotel.add(lblResort);
 
-		JLabel i_lblNewLabel_1 = new JLabel("New label");
-		i_lblNewLabel_1.setIcon(new ImageIcon("C:\\Users\\Iheb\\Desktop\\15755113534_f75fd1636c_k.jpg"));
-		i_lblNewLabel_1.setBounds(0, 0, 763, 316);
-		panel_i_hotel.add(i_lblNewLabel_1);
+		JLabel i_backgH = new JLabel("New label");
+		i_backgH.setIcon(new ImageIcon(
+				"C:\\Users\\Iheb\\Desktop\\Ski Freestyle Wallpaper High Definition 61942 5975 Wallpaper  Cool ....jpg"));
+		i_backgH.setBounds(0, 0, 763, 316);
+		panel_i_hotel.add(i_backgH);
 
 		JPanel panel_i_trans = new JPanel();
 		panel_i_trans.setLayout(null);
@@ -386,10 +466,6 @@ public class HomeManager {
 		JTextArea i_tr_descriptiont = new JTextArea();
 		i_tr_descriptiont.setBounds(139, 46, 204, 69);
 		panel_i_trans.add(i_tr_descriptiont);
-
-		JComboBox i_tr_resort_combo = new JComboBox();
-		i_tr_resort_combo.setBounds(139, 238, 113, 20);
-		panel_i_trans.add(i_tr_resort_combo);
 
 		JLabel i_type = new JLabel("Type :");
 		i_type.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
@@ -407,6 +483,7 @@ public class HomeManager {
 		panel_i_trans.add(i_lb);
 
 		JSpinner i_tr_cap = new JSpinner();
+		i_tr_cap.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
 		i_tr_cap.setBounds(139, 126, 123, 20);
 		panel_i_trans.add(i_tr_cap);
 
@@ -415,20 +492,31 @@ public class HomeManager {
 		i_label_3.setBounds(10, 156, 99, 25);
 		panel_i_trans.add(i_label_3);
 
-		JComboBox i_tr_type_combo = new JComboBox();
-		i_tr_type_combo.setModel(new DefaultComboBoxModel(new String[] { "Car", "JetSki", "Sky tram" }));
-		i_tr_type_combo.setBounds(139, 15, 204, 20);
+		panel_i_trans.add(i_tr_resort_combo);
 		panel_i_trans.add(i_tr_type_combo);
 
 		JButton i_tr_add = new JButton("Add");
 		i_tr_add.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
+				if (i_tr_descriptiont.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Please Fill the description space space");
+					return;
+				}
+				if (i_tr_path.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Please select a photo");
+					return;
+				}
+				if (i_tr_price.getValue().equals("")) {
+					JOptionPane.showMessageDialog(null, "Please select a photo");
+					return;
+				}
+
 				Transport transport = new Transport();
 				transport.setType(i_tr_type_combo.getSelectedItem().toString());
 
 				transport.setDescription(i_tr_descriptiont.getText());
-				transport.setBookingPrice(Float.parseFloat(i_tr_price.getText()));
+				transport.setBookingPrice((float) i_tr_price.getValue());
 				transport.setCapacity((Integer) i_tr_cap.getValue());
 				try {
 					transport.setResort(resortBusiness.getProxy()
@@ -473,9 +561,19 @@ public class HomeManager {
 				JFileChooser ch = new JFileChooser();
 				ch.showOpenDialog(null);
 				File f = ch.getSelectedFile();
-				image = f.getAbsolutePath();
+				if (f != null) {
+					image = f.getAbsolutePath();
 
-				i_tr_path.setText(image);
+					i_tr_path.setText(image);
+				}
+
+				else {
+					
+					image= "src//main//resources//imgs//defaultTr.jpg";
+					i_tr_path.setText(image);
+				}
+
+			
 
 			}
 		});
@@ -483,9 +581,11 @@ public class HomeManager {
 		panel_i_trans.add(i_tr_choose_img);
 
 		i_tr_path = new JTextField();
+		i_tr_path.setEditable(false);
 		i_tr_path.setColumns(10);
 		i_tr_path.setBounds(262, 160, 148, 20);
 		panel_i_trans.add(i_tr_path);
+		panel_i_trans.add(i_tr_price);
 
 		JLabel i_tr_image = new JLabel("");
 		i_tr_image.setBounds(516, 187, 150, 130);
@@ -507,7 +607,7 @@ public class HomeManager {
 					transport.setType(i_tr_type_combo.getSelectedItem().toString());
 
 					transport.setDescription(i_tr_descriptiont.getText());
-					transport.setBookingPrice(Float.parseFloat(i_tr_price.getText()));
+					transport.setBookingPrice((float) i_tr_price.getValue());
 					transport.setCapacity((Integer) i_tr_cap.getValue());
 					try {
 						transport.setResort(resortBusiness.getProxy()
@@ -582,14 +682,9 @@ public class HomeManager {
 		label_5.setBounds(10, 234, 99, 25);
 		panel_i_trans.add(label_5);
 
-		transportmodel.fillResortComboBox(i_tr_resort_combo);
-
 		JScrollPane i_tr_scrollPane = new JScrollPane();
 		i_tr_scrollPane.setBounds(420, 11, 333, 157);
 		panel_i_trans.add(i_tr_scrollPane);
-
-		i_tr_table = new JTable();
-		i_tr_table.setModel(transportmodel.transportModel());
 
 		i_tr_table.addMouseListener(new MouseAdapter() {
 			@Override
@@ -623,7 +718,7 @@ public class HomeManager {
 						i_tr_type_combo.setSelectedIndex(2);
 					i_tr_descriptiont.setText(trrow.getDescription());
 					i_tr_cap.setValue(trrow.getCapacity());
-					i_tr_price.setText(String.valueOf(trrow.getBookingPrice()));
+					i_tr_price.setValue(trrow.getBookingPrice());
 
 					// end modif
 
@@ -641,65 +736,85 @@ public class HomeManager {
 		i_lblBookingprice.setBounds(10, 203, 119, 25);
 		panel_i_trans.add(i_lblBookingprice);
 
-		i_tr_price = new JTextField();
-		i_tr_price.setBounds(139, 207, 123, 20);
-		panel_i_trans.add(i_tr_price);
-		i_tr_price.setColumns(10);
+		JLabel i_lblDt = new JLabel("DT");
+		i_lblDt.setFont(new Font("Source Sans Pro", Font.BOLD, 16));
+		i_lblDt.setBounds(268, 208, 46, 14);
+		panel_i_trans.add(i_lblDt);
 
 		JLabel i_backg = new JLabel("");
 		i_backg.setIcon(new ImageIcon(
 				"C:\\Users\\Iheb\\Desktop\\Ski Freestyle Wallpaper High Definition 61942 5975 Wallpaper  Cool ....jpg"));
 		i_backg.setBounds(0, 0, 763, 316);
 		panel_i_trans.add(i_backg);
-		
+
 		JPanel panel_i_piste = new JPanel();
 		panel_i_piste.setLayout(null);
 		tabbedPane.addTab("Manage Pistes", null, panel_i_piste, null);
-		
+
 		JTextArea i_pi_description = new JTextArea();
 		i_pi_description.setBounds(139, 62, 204, 69);
 		panel_i_piste.add(i_pi_description);
-		
-	
-		
+
 		JLabel lblPisteName = new JLabel("Piste name :");
 		lblPisteName.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
 		lblPisteName.setBounds(10, 27, 99, 25);
 		panel_i_piste.add(lblPisteName);
-		
+
 		i_pi_name = new JTextField();
 		i_pi_name.setColumns(10);
 		i_pi_name.setBounds(139, 31, 149, 20);
 		panel_i_piste.add(i_pi_name);
-		
+
 		JComboBox i_pi_typecombo = new JComboBox();
-		i_pi_typecombo.setModel(new DefaultComboBoxModel(new String[] {"Training", "Daily Activities"}));
+		i_pi_typecombo.setModel(new DefaultComboBoxModel(new String[] { "Training", "Daily Activities" }));
 		i_pi_typecombo.setBounds(139, 148, 113, 20);
 		panel_i_piste.add(i_pi_typecombo);
-		
+
 		JLabel i_pi_lblType = new JLabel("Type :");
 		i_pi_lblType.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
 		i_pi_lblType.setBounds(10, 144, 99, 25);
 		panel_i_piste.add(i_pi_lblType);
-		
+
 		JLabel i_deslabel_1 = new JLabel("Description :");
 		i_deslabel_1.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
 		i_deslabel_1.setBounds(10, 60, 99, 25);
 		panel_i_piste.add(i_deslabel_1);
-		
+
 		JLabel i_pi_l = new JLabel("Image :");
 		i_pi_l.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
 		i_pi_l.setBounds(10, 186, 99, 25);
 		panel_i_piste.add(i_pi_l);
-		
-		JComboBox i_pi_resortcombo = new JComboBox();
-		i_pi_resortcombo.setBounds(139, 238, 113, 20);
+
 		panel_i_piste.add(i_pi_resortcombo);
-		
+
 		JButton i_pi_add = new JButton("Add");
+
 		i_pi_add.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				if (i_pi_name.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Please Fill the name space");
+					return;
+				}
+
+				if (i_pi_description.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Please Fill the description space");
+					return;
+				}
+				if (i_pi_path.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Please select a photo");
+					return;
+				}
+
+				for (int i = 0; i < pistemodel.getAll().size(); i++) {
+
+					if (i_pi_name.getText().equals(pistemodel.getAll().get(i).getName())) {
+						JOptionPane.showMessageDialog(null, "a Piste with that name already exists");
+						return;
+
+					}
+
+				}
+
 				Piste piste = new Piste();
 				piste.setDescription(i_pi_description.getText());
 				piste.setName(i_pi_name.getText());
@@ -739,37 +854,46 @@ public class HomeManager {
 		i_pi_add.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
 		i_pi_add.setBounds(39, 288, 99, 23);
 		panel_i_piste.add(i_pi_add);
-		
+
 		JButton i_pi_chooseimage = new JButton("choose image");
 		i_pi_chooseimage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				JFileChooser ch = new JFileChooser();
 				ch.showOpenDialog(null);
 				File f = ch.getSelectedFile();
-				image = f.getAbsolutePath();
+				if (f != null) {
+					image = f.getAbsolutePath();
 
-				i_pi_path.setText(image);
+					i_pi_path.setText(image);
+				}
+
+				else {
+					
+					image= "src//main//resources//imgs//defaultpiste.jpg";
+					i_pi_path.setText(image);
+				}
+
 			
 			}
 		});
 		i_pi_chooseimage.setBounds(139, 186, 113, 23);
 		panel_i_piste.add(i_pi_chooseimage);
-		
+
 		i_pi_path = new JTextField();
+		i_pi_path.setEditable(false);
 		i_pi_path.setColumns(10);
 		i_pi_path.setBounds(261, 187, 148, 20);
 		panel_i_piste.add(i_pi_path);
-		
+
 		JLabel i_pi_image = new JLabel("");
 		i_pi_image.setBounds(516, 187, 150, 130);
 		panel_i_piste.add(i_pi_image);
-		
+
 		JScrollPane i_pi_scrollPane = new JScrollPane();
 		i_pi_scrollPane.setBounds(424, 11, 329, 165);
 		panel_i_piste.add(i_pi_scrollPane);
-		
-		i_pi_table = new JTable();
+
 		i_pi_table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -798,7 +922,7 @@ public class HomeManager {
 						i_pi_typecombo.setSelectedIndex(0);
 					if (pirow.getType().equals("Daily Activities"))
 						i_pi_typecombo.setSelectedIndex(1);
-				
+
 					i_pi_description.setText(pirow.getDescription());
 					i_pi_name.setText(pirow.getName());
 
@@ -810,23 +934,45 @@ public class HomeManager {
 				}
 
 			}
-				
-				
-			
+
 		});
-		i_pi_table.setModel(pistemodel.pisteModel());
+
 		i_pi_scrollPane.setViewportView(i_pi_table);
-		
+
 		JButton i_pi_edit = new JButton("Edit");
 		i_pi_edit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				pirow = null;
 				int pi_index = i_pi_table.getSelectedRow();
 
 				if (pi_index != -1) {
 
 					pirow = pistemodel.pistelist.get(pi_index);
+
+					if (i_pi_name.getText().equals("")) {
+						JOptionPane.showMessageDialog(null, "Please Fill the name space");
+						return;
+					}
+
+					if (i_pi_description.getText().equals("")) {
+						JOptionPane.showMessageDialog(null, "Please Fill the description space");
+						return;
+					}
+					if (i_pi_path.getText().equals("")) {
+						JOptionPane.showMessageDialog(null, "Please select a photo");
+						return;
+					}
+
+					for (int i = 0; i < pistemodel.getAll().size(); i++) {
+
+						if (i_pi_name.getText().equals(pistemodel.getAll().get(i).getName())) {
+							JOptionPane.showMessageDialog(null, "a Piste with that name already exists");
+							return;
+
+						}
+
+					}
 
 					Piste piste = new Piste();
 					piste.setIdPiste(pirow.getIdPiste());
@@ -865,16 +1011,16 @@ public class HomeManager {
 					JOptionPane.showMessageDialog(null, "Please select a piste to modify");
 				}
 			}
-			
+
 		});
 		i_pi_edit.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
 		i_pi_edit.setBounds(183, 288, 89, 23);
 		panel_i_piste.add(i_pi_edit);
-		
+
 		JButton i_pi_remove = new JButton("Remove");
 		i_pi_remove.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				pirow = null;
 				int pi_index = i_pi_table.getSelectedRow();
 
@@ -896,24 +1042,20 @@ public class HomeManager {
 				}
 
 			}
-				
-			
+
 		});
 		i_pi_remove.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
 		i_pi_remove.setBounds(321, 288, 89, 23);
 		panel_i_piste.add(i_pi_remove);
-		
+
 		JLabel i_pilabel_res = new JLabel("Resort :");
 		i_pilabel_res.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
 		i_pilabel_res.setBounds(10, 234, 99, 25);
 		panel_i_piste.add(i_pilabel_res);
-	
-		
-		
-	
-		
+
 		JLabel i_pi_backg = new JLabel("New label");
-		i_pi_backg.setIcon(new ImageIcon("C:\\Users\\Iheb\\Desktop\\Ski Freestyle Wallpaper High Definition 61942 5975 Wallpaper  Cool ....jpg"));
+		i_pi_backg.setIcon(new ImageIcon(
+				"C:\\Users\\Iheb\\Desktop\\Ski Freestyle Wallpaper High Definition 61942 5975 Wallpaper  Cool ....jpg"));
 		i_pi_backg.setBounds(0, 0, 763, 316);
 		panel_i_piste.add(i_pi_backg);
 		JPanel panel = new JPanel();
@@ -924,10 +1066,6 @@ public class HomeManager {
 
 		i_label.setBounds(0, 0, 768, 420);
 		ManagerGUI.getContentPane().add(i_label);
-		
-		
-		hotelmodel.fillResortComboBox(i_hotel_combo);
-		pistemodel.fillResortComboBox(i_pi_resortcombo);
 
 	}
 }

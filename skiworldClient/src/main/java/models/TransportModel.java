@@ -11,6 +11,7 @@ import javax.swing.table.DefaultTableModel;
 import business.HotelBusiness;
 import business.ResortBusiness;
 import business.TransportBusiness;
+import entities.Hotel;
 import entities.Resort;
 import entities.Transport;
 
@@ -20,37 +21,32 @@ public class TransportModel {
 	public List<Transport> transporttlist;
 	TransportBusiness trBusiness = new TransportBusiness();
 	ResortBusiness resortBusiness = new ResortBusiness();
-	
-public DefaultTableModel transportModel() throws SQLException, IOException, NamingException {
-		
+
+	public DefaultTableModel transportModel() throws SQLException, IOException, NamingException {
 
 		DefaultTableModel transportModel = null;
-	
+
 		transporttlist = trBusiness.getProxy().findAllTransport();
 
-			String col[] = { "Type", "Description", "Price", "Capacity","Resort" };
-			transportModel = new DefaultTableModel(col, 0);
-			for (int i = 0; i < transporttlist.size(); i++) {
-				String Type = transporttlist.get(i).getType();
-				String Description =transporttlist.get(i).getDescription();
-				float Price = transporttlist.get(i).getBookingPrice();
-				int Capacity = transporttlist.get(i).getCapacity();
-				String Resort= transporttlist.get(i).getResort().getName();
+		String col[] = { "Type", "Description", "Price", "Capacity", "Resort" };
+		transportModel = new DefaultTableModel(col, 0);
+		for (int i = 0; i < transporttlist.size(); i++) {
+			String Type = transporttlist.get(i).getType();
+			String Description = transporttlist.get(i).getDescription();
+			float Price = transporttlist.get(i).getBookingPrice();
+			int Capacity = transporttlist.get(i).getCapacity();
+			String Resort = transporttlist.get(i).getResort().getName();
 
-				Object[] data = { Type, Description, Price, Capacity,Resort };
-				transportModel.addRow(data);
+			Object[] data = { Type, Description, Price, Capacity, Resort };
+			transportModel.addRow(data);
 
-			}
-		
+		}
+
 		return transportModel;
 
 	}
-	
-	
-	
-	
 
-	public final void fillResortComboBox(JComboBox j) throws NamingException, SQLException, IOException {
+	public void fillResortComboBox(JComboBox<String> j) throws NamingException, SQLException, IOException {
 
 		resortlist = resortBusiness.getProxy().findAllResorts();
 		for (int i = 0; i < resortlist.size(); i++) {
@@ -58,6 +54,10 @@ public DefaultTableModel transportModel() throws SQLException, IOException, Nami
 
 		}
 
+	}
+
+	public List<Transport> getAll() {
+		return transporttlist;
 	}
 
 }
