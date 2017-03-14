@@ -1,4 +1,4 @@
-package model;
+package models;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -11,7 +11,7 @@ import javax.swing.table.DefaultTableModel;
 import org.jsoup.nodes.Entities.EscapeMode;
 
 import business.EquipementBusiness;
-import business.StoreBusiness;
+import business.StoreBusinessDelegate;
 import entities.Equipments;
 import entities.Store;
 
@@ -19,7 +19,6 @@ public class EquipementModel {
 	public List<Equipments> EquipmentList;
 	public List<Store> StoreList;
 
-	StoreBusiness storeBusiness = new StoreBusiness();
 	
 	public EquipementModel() throws NamingException{
 	
@@ -46,7 +45,7 @@ public class EquipementModel {
 
 	public final void fillStoreComboBox(JComboBox cbxStore  ) throws NamingException, SQLException, IOException{
 		
-		StoreList = storeBusiness.getStoreProxy().findAllStore();
+		StoreList = StoreBusinessDelegate.findAllStores();
 		for (int i=0;i<StoreList.size();i++){
 			cbxStore.addItem(StoreList.get(i).getName());
 			

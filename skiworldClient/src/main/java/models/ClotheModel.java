@@ -1,4 +1,4 @@
-package model;
+package models;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -9,7 +9,8 @@ import javax.swing.JComboBox;
 import javax.swing.table.DefaultTableModel;
 
 import business.ClothBusiness;
-import business.StoreBusiness;
+
+import business.StoreBusinessDelegate;
 import entities.Clothes;
 import entities.Store;
 
@@ -18,7 +19,7 @@ public class ClotheModel {
 	public List<Clothes> ClotheList;
 	public List<Store> StoreList;
 	
-	StoreBusiness storeBusiness = new StoreBusiness();
+	
 	
 	public ClotheModel() throws NamingException{
 
@@ -46,7 +47,7 @@ public class ClotheModel {
 	
 	public final void fillStoreComboBox(JComboBox cbxStore  ) throws NamingException, SQLException, IOException{
 		
-		StoreList = storeBusiness.getStoreProxy().findAllStore();
+		StoreList = StoreBusinessDelegate.findAllStores();
 		for (int i=0;i<StoreList.size();i++){
 			cbxStore.addItem(StoreList.get(i).getName());
 			
@@ -55,7 +56,7 @@ public class ClotheModel {
 	
 	public final void fillResortComboBox(JComboBox cbxStore  ) throws NamingException, SQLException, IOException{
 		
-		StoreList = storeBusiness.getStoreProxy().findAllStore();
+		StoreList = StoreBusinessDelegate.findAllStores();
 		for (int i=0;i<StoreList.size();i++){
 			cbxStore.addItem(StoreList.get(i).getLocation());
 			
