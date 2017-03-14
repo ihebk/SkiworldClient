@@ -8,6 +8,8 @@ import java.awt.Image;
 import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -39,6 +41,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.RowFilter;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 
@@ -70,6 +73,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 public class HomeAdmin {
 
@@ -85,6 +89,7 @@ public class HomeAdmin {
 	public List<Resort> listStore;
 	private BufferedImage img_display;
 	public JPanel statTrackP, statCountResort;
+	private JTextField searchResort;
 
 	/**
 	 * Launch the application.
@@ -234,7 +239,7 @@ public class HomeAdmin {
 							resortDescription.setText("");
 							resortLocation.setText("");
 							ResortModel resortmodel = new ResortModel();
-							resortTable.setModel(resortmodel.getResortModel());
+							resortTable.setModel(resortmodel.getResortModel(null));
 							statRes();
 
 					} catch (NamingException e1) {
@@ -265,12 +270,12 @@ public class HomeAdmin {
 
 		JScrollPane t_scrollPane = new JScrollPane();
 
-		t_scrollPane.setBounds(424, 11, 329, 253);
+		t_scrollPane.setBounds(456, 47, 329, 253);
 		resorts.add(t_scrollPane);
 
 		resortTable = new JTable();
 		ResortModel resortModel = new ResortModel();
-		resortTable.setModel(resortModel.getResortModel());
+		resortTable.setModel(resortModel.getResortModel(null));
 		t_scrollPane.setViewportView(resortTable);
 		resortTable.addMouseListener(new MouseAdapter() {
 			@Override
@@ -323,7 +328,7 @@ public class HomeAdmin {
 						try {
 							ResortBusinessDelegate.updateResort(r);
 								ResortModel resortmodel = new ResortModel();
-								resortTable.setModel(resortmodel.getResortModel());
+								resortTable.setModel(resortmodel.getResortModel(null));
 								lblResortName.setForeground(Color.BLACK);
 								t_lblDescription.setForeground(Color.BLACK);
 								lblAdresREs.setForeground(Color.BLACK);
@@ -369,7 +374,7 @@ public class HomeAdmin {
 					try {
 						ResortBusinessDelegate.removeResort(r);
 							ResortModel resortmodel = new ResortModel();
-							resortTable.setModel(resortmodel.getResortModel());
+							resortTable.setModel(resortmodel.getResortModel(null));
 							addResort.setEnabled(true);
 							resortName.setText("");
 							resortDescription.setText("");
@@ -392,7 +397,33 @@ public class HomeAdmin {
 		i_lblNewLabel_1.setIcon(new ImageIcon("C:\\Users\\Iheb\\Desktop\\15755113534_f75fd1636c_k.jpg"));
 		i_lblNewLabel_1.setBounds(0, 0, 763, 335);
 		resorts.add(i_lblNewLabel_1);
-
+		
+		searchResort = new JTextField();
+		searchResort.setBounds(456, 16, 195, 20);
+		resorts.add(searchResort);
+		searchResort.setColumns(10);
+		searchResort.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				DefaultTableModel TableModel = (DefaultTableModel) resortTable.getModel();
+				TableRowSorter<DefaultTableModel> tr = new TableRowSorter<DefaultTableModel>(TableModel);
+				resortTable.setRowSorter(tr);
+		        tr.setRowFilter(RowFilter.regexFilter(searchResort.getText()));
+			}
+		});
 		JPanel statPanel = new JPanel();
 		tabbedPane.addTab("Statistics", null, statPanel, null);
 		statPanel.setLayout(null);

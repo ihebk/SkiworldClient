@@ -39,5 +39,8 @@ public class ResortBusinessDelegate {
 		getProxy().removeResort(Resort);
 
 	}
+	public static List<Resort> findResort(String txt){
+		return getProxy().findResort(txt);
+	}
 }
 
