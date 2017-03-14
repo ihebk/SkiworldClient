@@ -8,17 +8,14 @@ import javax.naming.NamingException;
 import javax.swing.JComboBox;
 import javax.swing.table.DefaultTableModel;
 
-import business.HotelBusiness;
-import business.PisteBusiness;
+import business.PisteDelegate;
 import business.ResortBusiness;
-import entities.Hotel;
 import entities.Piste;
 import entities.Resort;
 
 public class PisteModel {
 
 	public List<Piste> pistelist;
-	PisteBusiness pisteBusiness = new PisteBusiness();
 	public List<Resort> resortlist;
 	ResortBusiness resortBusiness = new ResortBusiness();
 
@@ -27,7 +24,7 @@ public class PisteModel {
 		DefaultTableModel pisteModel = null;
 		String Resort = "";
 
-		pistelist = pisteBusiness.getProxy().findAllPistes();
+		pistelist = PisteDelegate.findAllPistes();
 		resortlist = resortBusiness.getProxy().findAllResorts();
 
 		String col[] = { "Name", "Description", "Type", "Resort" };

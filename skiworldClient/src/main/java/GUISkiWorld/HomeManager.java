@@ -10,14 +10,12 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.sql.rowset.serial.SerialException;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -33,14 +31,14 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
+import javax.xml.bind.JAXBException;
 
-import business.HotelBusiness;
-import business.PisteBusiness;
+import business.HotelDelegate;
+import business.PisteDelegate;
 import business.ResortBusiness;
-import business.TransportBusiness;
-import contracts.HotelCrudEJBRemote;
-import contracts.ResortCrudEJBRemote;
+import business.TransportDelegate;
 import entities.Hotel;
 import entities.Piste;
 import entities.Transport;
@@ -48,10 +46,7 @@ import models.HotelModel;
 import models.PisteModel;
 import models.TransportModel;
 import skiworldClient.SMS;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.text.TabExpander;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.SpinnerNumberModel;
+import tk.plogitech.darksky.forecast.ForecastException;
 
 public class HomeManager {
 
@@ -67,10 +62,10 @@ public class HomeManager {
 	public Transport trrow = null;
 	public Piste pirow = null;
 	private BufferedImage img_display;
-	HotelBusiness hotelBusiness = new HotelBusiness();
+	HotelDelegate hotelDelegate = new HotelDelegate();
+	TransportDelegate transportDelegate = new TransportDelegate();
+	PisteDelegate pisteDelegate = new PisteDelegate();
 	ResortBusiness resortBusiness = new ResortBusiness();
-	TransportBusiness transportBusiness = new TransportBusiness();
-	PisteBusiness pisteBusiness = new PisteBusiness();
 	private JTextField i_tr_path;
 	private JTable i_tr_table;
 	private JTextField i_pi_name;
@@ -99,8 +94,10 @@ public class HomeManager {
 	 * @throws NamingException
 	 * @throws IOException
 	 * @throws SQLException
+	 * @throws JAXBException 
+	 * @throws ForecastException 
 	 */
-	public HomeManager() throws NamingException, SQLException, IOException {
+	public HomeManager() throws NamingException, SQLException, IOException, JAXBException, ForecastException {
 		initialize();
 	}
 
@@ -110,8 +107,10 @@ public class HomeManager {
 	 * @throws NamingException
 	 * @throws IOException
 	 * @throws SQLException
+	 * @throws JAXBException 
+	 * @throws ForecastException 
 	 */
-	private void initialize() throws NamingException, SQLException, IOException {
+	private void initialize() throws NamingException, SQLException, IOException, JAXBException, ForecastException {
 		try {
 			UIManager.setLookAndFeel("com.jtattoo.plaf.aero.AeroLookAndFeel");
 
@@ -124,7 +123,27 @@ public class HomeManager {
 		ManagerGUI.getContentPane().setLayout(null);
 		ManagerGUI.getContentPane().setLayout(null);
 
-		// SMS.main(null, "+21624056027", "hello");
+		//SMS.main(null, "+21624056027", "hello");
+//		YahooWeatherService service = new YahooWeatherService();
+//		Channel channel = service.getForecast("2502265", DegreeUnit.CELSIUS);
+//		System.out.println(channel.getDescription());
+//		System.out.println(channel.getWind());
+//		System.out.println(channel.getAstronomy());
+		
+//			ForecastRequest request = new ForecastRequestBuilder()
+//		        .key(new APIKey("ad7177e55a8be03097509cb51411cd08"))
+//		        .time(Instant.now().minus(5, ChronoUnit.DAYS))
+//		        .language(ForecastRequestBuilder.Language.de)
+//		        .units(ForecastRequestBuilder.Units.us)
+//		        .exclude(ForecastRequestBuilder.Block.minutely)
+//		        .extendHourly()
+//		        .location(new GeoCoordinates(new Longitude(13.377704), new Latitude(52.516275))).build();
+//
+//		    DarkSkyClient client = new DarkSkyClient();
+//		    String forecast = client.forecastJsonString(request);
+//		    System.out.println(forecast);
+		
+		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBounds(0, 76, 768, 344);
 		ManagerGUI.getContentPane().add(tabbedPane);
@@ -191,6 +210,7 @@ public class HomeManager {
 		i_btnNewButton.setBounds(39, 288, 99, 23);
 		i_btnNewButton.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
 		i_btnNewButton.addActionListener(new ActionListener() {
+			@SuppressWarnings("static-access")
 			public void actionPerformed(ActionEvent e) {
 
 				if (i_hotelname.getText().equals("")) {
@@ -242,7 +262,7 @@ public class HomeManager {
 
 				try {
 
-					hotelBusiness.getProxy().addHotel(hotel);
+					hotelDelegate.addHotel(hotel);
 
 					i_table_hotel.setModel(hotelmodel.hotelModel());
 				} catch (SQLException | IOException | NamingException e1) {
@@ -365,16 +385,10 @@ public class HomeManager {
 						JOptionPane.showMessageDialog(null, "Please select a photo");
 						return;
 					}
+				
+					
 
-					for (int i = 0; i < hotelmodel.getAll().size(); i++) {
-
-						if (i_hotelname.getText().equals(hotelmodel.getAll().get(i).getName())) {
-							JOptionPane.showMessageDialog(null, "a Hotel with that name already exists");
-							return;
-
-						}
-
-					}
+				
 
 					Hotel hotel = new Hotel();
 					hotel.setIdHotel(hotelrow.getIdHotel());
@@ -402,7 +416,7 @@ public class HomeManager {
 					hotel.setImage(bFile);
 
 					try {
-						hotelBusiness.getProxy().updateHotel(hotel);
+						hotelDelegate.updateHotel(hotel);
 						i_table_hotel.setModel(hotelmodel.hotelModel());
 					} catch (SQLException | IOException | NamingException e1) {
 						// TODO Auto-generated catch block
@@ -430,7 +444,10 @@ public class HomeManager {
 					hotelrow = hotelmodel.hotellist.get(index);
 
 					try {
-						hotelBusiness.getProxy().deleteHotel(hotelrow.getIdHotel());
+						hotelDelegate.deleteHotel(hotelrow.getIdHotel());
+						SMS.main(null, "+21624056027", "The hotel named "+hotelrow.getName().toUpperCase()+" was removed ! :)");
+
+
 
 						i_table_hotel.setModel(hotelmodel.hotelModel());
 					} catch (SQLException | IOException | NamingException e1) {
@@ -539,7 +556,7 @@ public class HomeManager {
 				transport.setImage(bFile);
 
 				try {
-					transportBusiness.getProxy().addTransport(transport);
+					transportDelegate.addTransport(transport);
 					i_tr_table.setModel(transportmodel.transportModel());
 
 				} catch (SQLException | IOException | NamingException e1) {
@@ -630,7 +647,7 @@ public class HomeManager {
 					transport.setImage(bFile);
 
 					try {
-						transportBusiness.getProxy().updateTransport(transport);
+						transportDelegate.updateTransport(transport);
 						i_tr_table.setModel(transportmodel.transportModel());
 					} catch (SQLException | IOException | NamingException e1) {
 						// TODO Auto-generated catch block
@@ -658,7 +675,8 @@ public class HomeManager {
 					trrow = transportmodel.transporttlist.get(tr_index);
 
 					try {
-						transportBusiness.getProxy().deleteTransport(trrow.getIdTransport());
+						transportDelegate.deleteTransport(trrow.getIdTransport());
+
 
 						i_tr_table.setModel(transportmodel.transportModel());
 					} catch (SQLException | IOException | NamingException e1) {
@@ -840,7 +858,7 @@ public class HomeManager {
 				piste.setImage(bFile);
 
 				try {
-					pisteBusiness.getProxy().addPiste(piste);
+					pisteDelegate.addPiste(piste);
 
 					i_pi_table.setModel(pistemodel.pisteModel());
 				} catch (SQLException | IOException | NamingException e1) {
@@ -963,16 +981,10 @@ public class HomeManager {
 						JOptionPane.showMessageDialog(null, "Please select a photo");
 						return;
 					}
+					
 
-					for (int i = 0; i < pistemodel.getAll().size(); i++) {
-
-						if (i_pi_name.getText().equals(pistemodel.getAll().get(i).getName())) {
-							JOptionPane.showMessageDialog(null, "a Piste with that name already exists");
-							return;
-
-						}
-
-					}
+					
+					
 
 					Piste piste = new Piste();
 					piste.setIdPiste(pirow.getIdPiste());
@@ -1000,7 +1012,7 @@ public class HomeManager {
 					piste.setImage(bFile);
 
 					try {
-						pisteBusiness.getProxy().updatePiste(piste);
+						pisteDelegate.updatePiste(piste);
 						i_pi_table.setModel(pistemodel.pisteModel());
 					} catch (SQLException | IOException | NamingException e1) {
 						// TODO Auto-generated catch block
@@ -1029,7 +1041,9 @@ public class HomeManager {
 					pirow = pistemodel.pistelist.get(pi_index);
 
 					try {
-						pisteBusiness.getProxy().deletePiste(pirow.getIdPiste());
+						pisteDelegate.deletePiste(pirow.getIdPiste());
+						SMS.main(null, "+21624056027", "The Piste named "+pirow.getName().toUpperCase()+" was removed ! :)");
+
 
 						i_pi_table.setModel(pistemodel.pisteModel());
 					} catch (SQLException | IOException | NamingException e1) {

@@ -8,10 +8,8 @@ import javax.naming.NamingException;
 import javax.swing.JComboBox;
 import javax.swing.table.DefaultTableModel;
 
-import business.HotelBusiness;
 import business.ResortBusiness;
-import business.TransportBusiness;
-import entities.Hotel;
+import business.TransportDelegate;
 import entities.Resort;
 import entities.Transport;
 
@@ -19,14 +17,13 @@ public class TransportModel {
 
 	public List<Resort> resortlist;
 	public List<Transport> transporttlist;
-	TransportBusiness trBusiness = new TransportBusiness();
 	ResortBusiness resortBusiness = new ResortBusiness();
 
 	public DefaultTableModel transportModel() throws SQLException, IOException, NamingException {
 
 		DefaultTableModel transportModel = null;
 
-		transporttlist = trBusiness.getProxy().findAllTransport();
+		transporttlist = TransportDelegate.findAllTransport();
 
 		String col[] = { "Type", "Description", "Price", "Capacity", "Resort" };
 		transportModel = new DefaultTableModel(col, 0);
