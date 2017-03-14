@@ -282,6 +282,7 @@ public class HomeAdmin {
 			public void mouseClicked(MouseEvent e) {
 				int index = resortTable.getSelectedRow();
 				ResortModel rt;
+				
 				try {
 					rt = new ResortModel();
 					rowSelectedResort = rt.getResortList().get(index);
@@ -289,9 +290,12 @@ public class HomeAdmin {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				
 				resortName.setText(rowSelectedResort.getName());
 				resortDescription.setText(rowSelectedResort.getDescription());
 				resortLocation.setText(rowSelectedResort.getLocation());
+			
+					
 				addResort.setEnabled(false);
 			}
 		});
@@ -404,24 +408,35 @@ public class HomeAdmin {
 		searchResort.setColumns(10);
 		searchResort.addKeyListener(new KeyListener() {
 			
-			@Override
-			public void keyTyped(KeyEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
+		
 			
 			@Override
 			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
+				ResortModel rm;
+				try {
+					rm = new ResortModel();
+					resortTable.setModel(rm.getResortModel(searchResort.getText()));
+				} catch (NamingException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				DefaultTableModel TableModel = (DefaultTableModel) resortTable.getModel();
+				TableRowSorter<DefaultTableModel> tr = new TableRowSorter<DefaultTableModel>(TableModel);
+				resortTable.setRowSorter(tr);
+		        tr.setRowFilter(RowFilter.regexFilter(searchResort.getText()));
 				
 			}
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
-				DefaultTableModel TableModel = (DefaultTableModel) resortTable.getModel();
-				TableRowSorter<DefaultTableModel> tr = new TableRowSorter<DefaultTableModel>(TableModel);
-				resortTable.setRowSorter(tr);
-		        tr.setRowFilter(RowFilter.regexFilter(searchResort.getText()));
+
+				
+			}
+
+			@Override
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
 			}
 		});
 		JPanel statPanel = new JPanel();
