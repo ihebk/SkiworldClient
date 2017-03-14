@@ -1,5 +1,7 @@
 package GUISkiWorld;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Image;
@@ -13,6 +15,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.naming.NamingException;
 import javax.swing.DefaultComboBoxModel;
@@ -20,6 +24,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -35,15 +40,21 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
 import javax.xml.bind.JAXBException;
 
+import org.eclipse.wb.swing.FocusTraversalOnArray;
+
 import business.HotelDelegate;
 import business.PisteDelegate;
-import business.ResortBusiness;
+import business.ResortBusinessDelegate;
+import business.StoreBusinessDelegate;
 import business.TransportDelegate;
 import entities.Hotel;
 import entities.Piste;
+import entities.Resort;
+import entities.Store;
 import entities.Transport;
 import models.HotelModel;
 import models.PisteModel;
+import models.StoreModel;
 import models.TransportModel;
 import skiworldClient.SMS;
 import tk.plogitech.darksky.forecast.ForecastException;
@@ -51,6 +62,14 @@ import tk.plogitech.darksky.forecast.ForecastException;
 public class HomeManager {
 
 	private JFrame ManagerGUI;
+	private JTextField storeName;
+	private JTextField storeLocation;
+	private JTextField phoneStore;
+	private JTextField emailStore;
+	private JComboBox<String> resortStore;
+	public Store rowSelectedStore;
+	public List<Resort> listStore;
+	private JTable storeTable;
 	private JTextField i_hotelname;
 	private JTextField i_imagepath;
 	private String image ;
@@ -65,7 +84,6 @@ public class HomeManager {
 	HotelDelegate hotelDelegate = new HotelDelegate();
 	TransportDelegate transportDelegate = new TransportDelegate();
 	PisteDelegate pisteDelegate = new PisteDelegate();
-	ResortBusiness resortBusiness = new ResortBusiness();
 	private JTextField i_tr_path;
 	private JTable i_tr_table;
 	private JTextField i_pi_name;
@@ -98,7 +116,9 @@ public class HomeManager {
 	 * @throws ForecastException 
 	 */
 	public HomeManager() throws NamingException, SQLException, IOException, JAXBException, ForecastException {
+
 		initialize();
+		fillCbResort();
 	}
 
 	/**
@@ -111,12 +131,12 @@ public class HomeManager {
 	 * @throws ForecastException 
 	 */
 	private void initialize() throws NamingException, SQLException, IOException, JAXBException, ForecastException {
+
 		try {
 			UIManager.setLookAndFeel("com.jtattoo.plaf.aero.AeroLookAndFeel");
 
 		} catch (Exception e) {
 		}
-
 		ManagerGUI = new JFrame();
 		ManagerGUI.setBounds(100, 100, 784, 459);
 		ManagerGUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -147,6 +167,28 @@ public class HomeManager {
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBounds(0, 76, 768, 344);
 		ManagerGUI.getContentPane().add(tabbedPane);
+		JPanel Stores = new JPanel();
+		Stores.setLayout(null);
+		tabbedPane.addTab("Stores Management", null, Stores, null);
+
+		JLabel lblStoreAdress = new JLabel("Adresse :");
+		lblStoreAdress.setFont(new Font("Dialog", Font.PLAIN, 16));
+		lblStoreAdress.setBounds(10, 239, 99, 25);
+		Stores.add(lblStoreAdress);
+
+		JTextArea storeDescription = new JTextArea();
+		storeDescription.setBounds(139, 62, 204, 69);
+		Stores.add(storeDescription);
+		JLabel lblAlreadyExistPhR = new JLabel("Already exist");
+		lblAlreadyExistPhR.setForeground(Color.RED);
+		lblAlreadyExistPhR.setBounds(139, 176, 89, 14);
+		Stores.add(lblAlreadyExistPhR);
+		lblAlreadyExistPhR.setVisible(false);
+		JLabel lblAlreadyExistEmR = new JLabel("Already exist");
+		lblAlreadyExistEmR.setForeground(Color.RED);
+		lblAlreadyExistEmR.setBounds(282, 176, 99, 14);
+		Stores.add(lblAlreadyExistEmR);
+		lblAlreadyExistEmR.setVisible(false);
 
 		JPanel panel_i_hotel = new JPanel();
 		tabbedPane.addTab("Manage Hotels", null, panel_i_hotel, null);
@@ -176,7 +218,6 @@ public class HomeManager {
 		JComboBox i_tr_resort_combo = new JComboBox();
 		i_tr_resort_combo.setBounds(139, 238, 113, 20);
 		JComboBox i_pi_resortcombo = new JComboBox();
-		i_pi_resortcombo.setBounds(139, 238, 113, 20);
 
 		i_table_hotel = new JTable();
 		i_pi_table = new JTable();
@@ -201,6 +242,7 @@ public class HomeManager {
 		JSpinner i_hotelcapacity = new JSpinner();
 		i_hotelcapacity.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
 		i_hotelcapacity.setBounds(139, 148, 123, 20);
+
 
 		JLabel i_lblRating = new JLabel("Image :");
 		i_lblRating.setBounds(10, 186, 99, 25);
@@ -240,13 +282,8 @@ public class HomeManager {
 				hotel.setDescription(i_hoteldescription.getText());
 				hotel.setName(i_hotelname.getText());
 				hotel.setCapacity((Integer) i_hotelcapacity.getValue());
-				try {
-					hotel.setResort(
-							resortBusiness.getProxy().findResortByLabel(i_hotel_combo.getSelectedItem().toString()));
-				} catch (NamingException e2) {
-					// TODO Auto-generated catch block
-					e2.printStackTrace();
-				}
+				hotel.setResort(
+						ResortBusinessDelegate.findResortByLabel(i_hotel_combo.getSelectedItem().toString()));
 
 				File file = new File(image);
 				byte[] bFile = new byte[(int) file.length()];
@@ -395,13 +432,8 @@ public class HomeManager {
 					hotel.setDescription(i_hoteldescription.getText());
 					hotel.setName(i_hotelname.getText());
 					hotel.setCapacity((Integer) i_hotelcapacity.getValue());
-					try {
-						hotel.setResort(resortBusiness.getProxy()
-								.findResortByLabel(i_hotel_combo.getSelectedItem().toString()));
-					} catch (NamingException e2) {
-						// TODO Auto-generated catch block
-						e2.printStackTrace();
-					}
+					hotel.setResort(ResortBusinessDelegate
+							.findResortByLabel(i_hotel_combo.getSelectedItem().toString()));
 
 					File file = new File(image);
 					byte[] bFile = new byte[(int) file.length()];
@@ -535,13 +567,8 @@ public class HomeManager {
 				transport.setDescription(i_tr_descriptiont.getText());
 				transport.setBookingPrice((float) i_tr_price.getValue());
 				transport.setCapacity((Integer) i_tr_cap.getValue());
-				try {
-					transport.setResort(resortBusiness.getProxy()
-							.findResortByLabel(i_tr_resort_combo.getSelectedItem().toString()));
-				} catch (NamingException e2) {
-					// TODO Auto-generated catch block
-					e2.printStackTrace();
-				}
+				transport.setResort(ResortBusinessDelegate
+						.findResortByLabel(i_tr_resort_combo.getSelectedItem().toString()));
 
 				File file = new File(image);
 				byte[] bFile = new byte[(int) file.length()];
@@ -626,13 +653,8 @@ public class HomeManager {
 					transport.setDescription(i_tr_descriptiont.getText());
 					transport.setBookingPrice((float) i_tr_price.getValue());
 					transport.setCapacity((Integer) i_tr_cap.getValue());
-					try {
-						transport.setResort(resortBusiness.getProxy()
-								.findResortByLabel(i_tr_resort_combo.getSelectedItem().toString()));
-					} catch (NamingException e2) {
-						// TODO Auto-generated catch block
-						e2.printStackTrace();
-					}
+					transport.setResort(ResortBusinessDelegate
+							.findResortByLabel(i_tr_resort_combo.getSelectedItem().toString()));
 
 					File file = new File(image);
 					byte[] bFile = new byte[(int) file.length()];
@@ -765,6 +787,7 @@ public class HomeManager {
 		i_backg.setBounds(0, 0, 763, 316);
 		panel_i_trans.add(i_backg);
 
+		storeTable = new JTable();
 		JPanel panel_i_piste = new JPanel();
 		panel_i_piste.setLayout(null);
 		tabbedPane.addTab("Manage Pistes", null, panel_i_piste, null);
@@ -803,6 +826,7 @@ public class HomeManager {
 		i_pi_l.setBounds(10, 186, 99, 25);
 		panel_i_piste.add(i_pi_l);
 
+		i_pi_resortcombo.setBounds(139, 238, 113, 20);
 		panel_i_piste.add(i_pi_resortcombo);
 
 		JButton i_pi_add = new JButton("Add");
@@ -837,13 +861,8 @@ public class HomeManager {
 				piste.setDescription(i_pi_description.getText());
 				piste.setName(i_pi_name.getText());
 				piste.setType(i_pi_typecombo.getSelectedItem().toString());
-				try {
-					piste.setResort(
-							resortBusiness.getProxy().findResortByLabel(i_pi_resortcombo.getSelectedItem().toString()));
-				} catch (NamingException e2) {
-					// TODO Auto-generated catch block
-					e2.printStackTrace();
-				}
+				piste.setResort(
+						ResortBusinessDelegate.findResortByLabel(i_pi_resortcombo.getSelectedItem().toString()));
 
 				File file = new File(image);
 				byte[] bFile = new byte[(int) file.length()];
@@ -893,6 +912,8 @@ public class HomeManager {
 				}
 
 			
+				i_pi_path.setText(image);
+
 			}
 		});
 		i_pi_chooseimage.setBounds(139, 186, 113, 23);
@@ -912,6 +933,7 @@ public class HomeManager {
 		i_pi_scrollPane.setBounds(424, 11, 329, 165);
 		panel_i_piste.add(i_pi_scrollPane);
 
+		i_pi_table = new JTable();
 		i_pi_table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -991,13 +1013,8 @@ public class HomeManager {
 					piste.setDescription(i_pi_description.getText());
 					piste.setName(i_pi_name.getText());
 					piste.setType(i_pi_typecombo.getSelectedItem().toString());
-					try {
-						piste.setResort(resortBusiness.getProxy()
-								.findResortByLabel(i_hotel_combo.getSelectedItem().toString()));
-					} catch (NamingException e2) {
-						// TODO Auto-generated catch block
-						e2.printStackTrace();
-					}
+					piste.setResort(ResortBusinessDelegate
+							.findResortByLabel(i_hotel_combo.getSelectedItem().toString()));
 
 					File file = new File(image);
 					byte[] bFile = new byte[(int) file.length()];
@@ -1080,6 +1097,289 @@ public class HomeManager {
 
 		i_label.setBounds(0, 0, 768, 420);
 		ManagerGUI.getContentPane().add(i_label);
+
+		JLabel lblStoreName = new JLabel("Store name :");
+		lblStoreName.setFont(new Font("Dialog", Font.PLAIN, 16));
+		lblStoreName.setBounds(10, 27, 99, 25);
+		Stores.add(lblStoreName);
+
+		storeName = new JTextField();
+		storeName.setColumns(10);
+		storeName.setBounds(139, 31, 149, 20);
+		Stores.add(storeName);
+
+		JLabel label_51 = new JLabel("");
+		label_51.setForeground(Color.RED);
+		label_51.setBounds(10, 24, 763, 316);
+		Stores.add(label_51);
+
+		JLabel lblPhoneStore = new JLabel("Phone");
+		lblPhoneStore.setBounds(10, 153, 89, 14);
+		Stores.add(lblPhoneStore);
+
+		JLabel lblEmailStore = new JLabel("Email :");
+		lblEmailStore.setBounds(237, 153, 51, 14);
+		Stores.add(lblEmailStore);
+
+		phoneStore = new JTextField();
+		phoneStore.setBounds(139, 150, 89, 20);
+		Stores.add(phoneStore);
+		phoneStore.setColumns(10);
+
+		emailStore = new JTextField();
+		emailStore.setBounds(282, 150, 132, 20);
+		Stores.add(emailStore);
+		emailStore.setColumns(10);
+
+		resortStore = new JComboBox();
+		resortStore.setBounds(139, 201, 99, 20);
+		Stores.add(resortStore);
+
+		JLabel lblStoreDesc = new JLabel("Description :");
+		lblStoreDesc.setFont(new Font("Dialog", Font.PLAIN, 16));
+		lblStoreDesc.setBounds(10, 60, 99, 25);
+		Stores.add(lblStoreDesc);
+
+		JButton addStore = new JButton("Add");
+		addStore.setFont(new Font("Dialog", Font.PLAIN, 16));
+		addStore.setBounds(39, 288, 99, 23);
+		Stores.add(addStore);
+		addStore.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Store r = new Store();
+				int testPH = 0, testEm = 0;
+				try {
+					r.setResort(ResortBusinessDelegate.findAllResorts().get(resortStore.getSelectedIndex()));
+					for (int i = 0; i < StoreBusinessDelegate.findAllStores().size(); i++) {
+						if (StoreBusinessDelegate.findAllStores().get(i).getEmail().equals(emailStore.getText()))
+							testEm = 1;
+					}
+
+					if ((storeName.getText().length() == 0) || (storeDescription.getText().length() == 0)
+							|| (storeLocation.getText().length() == 0) || (emailStore.getText().length() == 0)
+							|| (phoneStore.getText().length() == 0) || (testEm == 1)) {
+
+						if (storeName.getText().length() == 0)
+							lblStoreName.setForeground(Color.RED);
+						if (storeDescription.getText().length() == 0)
+							lblStoreDesc.setForeground(Color.RED);
+						if (storeLocation.getText().length() == 0)
+							lblStoreAdress.setForeground(Color.RED);
+						if (emailStore.getText().length() == 0)
+							lblEmailStore.setForeground(Color.RED);
+						if (phoneStore.getText().length() == 0)
+							lblPhoneStore.setForeground(Color.RED);
+						else {
+
+							for (int i = 0; i < StoreBusinessDelegate.findAllStores().size(); i++) {
+								if (StoreBusinessDelegate.findAllStores().get(i).getPhone() == Long
+										.parseLong(phoneStore.getText()))
+									lblAlreadyExistPhR.setVisible(true);
+							}
+						}
+						if (testEm == 1)
+							lblAlreadyExistEmR.setVisible(true);
+					} else {
+						r.setDescription(storeDescription.getText());
+						r.setEmail(emailStore.getText());
+						r.setLocation(storeLocation.getText());
+						r.setName(storeName.getText());
+						r.setPhone(Long.parseLong(phoneStore.getText()));
+						r.setResort(ResortBusinessDelegate.findAllResorts().get(resortStore.getSelectedIndex()));
+						StoreBusinessDelegate.addStore(r);
+						StoreModel storeModel = new StoreModel();
+						storeTable.setModel(storeModel.getStoreModel());
+						lblStoreName.setForeground(Color.BLACK);
+						lblStoreDesc.setForeground(Color.BLACK);
+						lblStoreAdress.setForeground(Color.BLACK);
+						lblEmailStore.setForeground(Color.BLACK);
+						lblPhoneStore.setForeground(Color.BLACK);
+						lblAlreadyExistEmR.setVisible(false);
+						lblAlreadyExistPhR.setVisible(false);
+						storeName.setText("");
+						storeDescription.setText("");
+						phoneStore.setText("");
+						storeLocation.setText("");
+						emailStore.setText("");
+					}
+				} catch (NamingException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+		});
+		storeLocation = new JTextField();
+		storeLocation.setColumns(10);
+		storeLocation.setBounds(139, 244, 227, 20);
+		Stores.add(storeLocation);
+
+		JLabel label_3 = new JLabel("");
+		label_3.setBounds(516, 187, 150, 130);
+		Stores.add(label_3);
+
+		JScrollPane storeScroll = new JScrollPane();
+		storeScroll.setBounds(424, 11, 329, 253);
+		Stores.add(storeScroll);
+		storeScroll.setViewportView(storeTable);
+		StoreModel storeModel = new StoreModel();
+		storeTable.setModel(storeModel.getStoreModel());
+		JButton editStore = new JButton("Edit");
+		editStore.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		editStore.setFont(new Font("Dialog", Font.PLAIN, 16));
+		editStore.setBounds(183, 288, 89, 23);
+		Stores.add(editStore);
+
+		JButton removeStore = new JButton("Remove");
+		removeStore.setFont(new Font("Dialog", Font.PLAIN, 16));
+		removeStore.setBounds(321, 288, 89, 23);
+		Stores.add(removeStore);
+
+		resortStore.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// try {
+				// //fillCbResort();
+				// } catch (NamingException e1) {
+				// // TODO Auto-generated catch block
+				// e1.printStackTrace();
+				// }
+			}
+		});
+		JLabel lblResort_Store = new JLabel("Resort");
+		lblResort_Store.setBounds(10, 204, 51, 14);
+		Stores.add(lblResort_Store);
+
+		Stores.setFocusTraversalPolicy(new FocusTraversalOnArray(
+				new Component[] { storeDescription, lblStoreName, storeName, lblStoreDesc, addStore, storeLocation,
+						label_3, storeScroll, editStore, removeStore, lblStoreAdress, label_51 }));
+		storeTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int index = storeTable.getSelectedRow();
+				StoreModel rt;
+
+				try {
+					rt = new StoreModel();
+					rowSelectedStore = rt.getStoreList().get(index);
+				} catch (NamingException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+				storeName.setText(rowSelectedStore.getName());
+				storeDescription.setText(rowSelectedStore.getDescription());
+				storeLocation.setText(rowSelectedStore.getLocation());
+				phoneStore.setText(Long.toString(rowSelectedStore.getPhone()));
+				emailStore.setText(rowSelectedStore.getEmail());
+				addStore.setEnabled(false);
+			}
+		});
+		editStore.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (rowSelectedStore == null) {
+					JDialog dialog = new JDialog();
+					dialog.setAlwaysOnTop(true);
+					JOptionPane.showMessageDialog(dialog, "Please select a Store to edit");
+
+				} else {
+					Store r = new Store();
+					try {
+
+						if ((storeName.getText().length() == 0) || (storeDescription.getText().length() == 0)
+								|| (storeLocation.getText().length() == 0) || (emailStore.getText().length() == 0)
+								|| (phoneStore.getText().length() == 0)) {
+
+							if (storeName.getText().length() == 0)
+								lblStoreName.setForeground(Color.RED);
+							if (storeDescription.getText().length() == 0)
+								lblStoreDesc.setForeground(Color.RED);
+							if (storeLocation.getText().length() == 0)
+								lblStoreAdress.setForeground(Color.RED);
+							if (emailStore.getText().length() == 0)
+								lblEmailStore.setForeground(Color.RED);
+							if (phoneStore.getText().length() == 0)
+								lblPhoneStore.setForeground(Color.RED);
+
+						} else {
+							r.setIdStore(rowSelectedStore.getIdStore());
+							r.setName(storeName.getText());
+							r.setDescription(storeDescription.getText());
+							r.setResort(rowSelectedStore.getResort());
+							r.setLocation(storeLocation.getText());
+							r.setEmail(emailStore.getText());
+							r.setPhone(Long.parseLong(phoneStore.getText()));
+							r.setResort(ResortBusinessDelegate.findAllResorts().get(resortStore.getSelectedIndex()));
+							StoreBusinessDelegate.updateStore(r);
+							StoreModel storemodel = new StoreModel();
+							storeTable.setModel(storemodel.getStoreModel());
+							addStore.setEnabled(true);
+							storeName.setText("");
+							storeDescription.setText("");
+							storeLocation.setText("");
+							phoneStore.setText("");
+							emailStore.setText("");
+							lblStoreName.setForeground(Color.BLACK);
+							lblStoreDesc.setForeground(Color.BLACK);
+							lblStoreAdress.setForeground(Color.BLACK);
+							lblEmailStore.setForeground(Color.BLACK);
+							lblPhoneStore.setForeground(Color.BLACK);
+
+						}
+					} catch (NamingException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+
+			}
+		});
+		removeStore.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (rowSelectedStore == null) {
+					JDialog dialog = new JDialog();
+					dialog.setAlwaysOnTop(true);
+					JOptionPane.showMessageDialog(dialog, "Please select a Store to remove");
+				} else {
+					Store r = new Store();
+					StoreBusinessDelegate rdb = new StoreBusinessDelegate();
+					r.setIdStore(rowSelectedStore.getIdStore());
+					r = rowSelectedStore;
+					try {
+						StoreBusinessDelegate.removeStore(r);
+						StoreModel storemodel = new StoreModel();
+						storeTable.setModel(storemodel.getStoreModel());
+						addStore.setEnabled(true);
+						storeName.setText("");
+						storeDescription.setText("");
+						storeLocation.setText("");
+						phoneStore.setText("");
+						emailStore.setText("");
+					} catch (NamingException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+
+			}
+		});
+		hotelmodel.fillResortComboBox(i_hotel_combo);
+		pistemodel.fillResortComboBox(i_pi_resortcombo);
+	}
+
+	public void fillCbResort() throws NamingException {
+
+		List<Resort> list = new ArrayList<>();
+		list = ResortBusinessDelegate.findAllResorts();
+		for (Resort name : list)
+			resortStore.addItem(name.getName());
 
 	}
 }

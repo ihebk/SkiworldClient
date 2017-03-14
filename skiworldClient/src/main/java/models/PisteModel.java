@@ -9,7 +9,7 @@ import javax.swing.JComboBox;
 import javax.swing.table.DefaultTableModel;
 
 import business.PisteDelegate;
-import business.ResortBusiness;
+import business.ResortBusinessDelegate;
 import entities.Piste;
 import entities.Resort;
 
@@ -17,7 +17,6 @@ public class PisteModel {
 
 	public List<Piste> pistelist;
 	public List<Resort> resortlist;
-	ResortBusiness resortBusiness = new ResortBusiness();
 
 	public DefaultTableModel pisteModel() throws SQLException, IOException, NamingException {
 
@@ -25,7 +24,8 @@ public class PisteModel {
 		String Resort = "";
 
 		pistelist = PisteDelegate.findAllPistes();
-		resortlist = resortBusiness.getProxy().findAllResorts();
+		resortlist = ResortBusinessDelegate.findAllResorts();
+
 
 		String col[] = { "Name", "Description", "Type", "Resort" };
 		pisteModel = new DefaultTableModel(col, 0);
@@ -33,10 +33,16 @@ public class PisteModel {
 			String Name = pistelist.get(i).getName();
 			String Description = pistelist.get(i).getDescription();
 			String Type = pistelist.get(i).getType();
+
 			// for (int j = 0; j < resortlist.size(); j++){
 			// if (resortlist.get(j).getPiste().getIdPiste()==
 			// pistelist.get(i).getIdPiste()){
 			Resort = pistelist.get(i).getResort().getName();
+
+				
+
+			
+
 
 			Object[] data = { Name, Description, Type, Resort };
 			pisteModel.addRow(data);
@@ -49,7 +55,8 @@ public class PisteModel {
 
 	public void fillResortComboBox(JComboBox<String> j) throws NamingException, SQLException, IOException {
 
-		resortlist = resortBusiness.getProxy().findAllResorts();
+
+		resortlist = ResortBusinessDelegate.findAllResorts();
 		for (int i = 0; i < resortlist.size(); i++) {
 			j.addItem(resortlist.get(i).getName());
 		}

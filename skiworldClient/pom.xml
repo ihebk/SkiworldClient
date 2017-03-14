@@ -13,6 +13,26 @@
 
 	<dependencies>
 
+
+		<dependency>
+			<groupId>edu.esprit.SkiWorld</groupId>
+			<artifactId>SkiWorld-ejb</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/jfree/jfreechart -->
+		<dependency>
+			<groupId>jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0.13</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.jtattoo/JTattoo -->
+		<dependency>
+			<groupId>com.jtattoo</groupId>
+			<artifactId>JTattoo</artifactId>
+			<version>1.6.11</version>
+		</dependency>
+
+
 		<dependency>
 			<groupId>edu.esprit.SkiWorld</groupId>
 			<artifactId>SkiWorld-ejb</artifactId>
@@ -58,6 +78,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</dependency>
 		
+
 
 		<dependency>
 			<groupId>org.hibernate</groupId>

@@ -8,7 +8,7 @@ import javax.naming.NamingException;
 import javax.swing.JComboBox;
 import javax.swing.table.DefaultTableModel;
 
-import business.ResortBusiness;
+import business.ResortBusinessDelegate;
 import business.TransportDelegate;
 import entities.Resort;
 import entities.Transport;
@@ -17,7 +17,6 @@ public class TransportModel {
 
 	public List<Resort> resortlist;
 	public List<Transport> transporttlist;
-	ResortBusiness resortBusiness = new ResortBusiness();
 
 	public DefaultTableModel transportModel() throws SQLException, IOException, NamingException {
 
@@ -45,7 +44,7 @@ public class TransportModel {
 
 	public void fillResortComboBox(JComboBox<String> j) throws NamingException, SQLException, IOException {
 
-		resortlist = resortBusiness.getProxy().findAllResorts();
+		resortlist = ResortBusinessDelegate.findAllResorts();
 		for (int i = 0; i < resortlist.size(); i++) {
 			j.addItem(resortlist.get(i).getName());
 

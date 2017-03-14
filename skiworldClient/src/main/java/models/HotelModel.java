@@ -9,7 +9,7 @@ import javax.swing.JComboBox;
 import javax.swing.table.DefaultTableModel;
 
 import business.HotelDelegate;
-import business.ResortBusiness;
+import business.ResortBusinessDelegate;
 import entities.Hotel;
 import entities.Resort;
 
@@ -17,7 +17,6 @@ public class HotelModel {
 
 	public List<Hotel> hotellist;
 	public List<Resort> resortlist;
-	ResortBusiness resortBusiness = new ResortBusiness();
 
 	public DefaultTableModel hotelModel() throws SQLException, IOException, NamingException {
 
@@ -43,13 +42,14 @@ public class HotelModel {
 
 	}
 
+
 	public void fillResortComboBox(JComboBox<String> j) throws NamingException, SQLException, IOException {
 
-		resortlist = resortBusiness.getProxy().findAllResorts();
+		resortlist = ResortBusinessDelegate.findAllResorts();
 		for (int i = 0; i < resortlist.size(); i++) {
-			j.addItem(resortlist.get(i).getName());
+			j.addItem(resortlist.get(i).getName()); }
 
-		}
+
 
 	}
 
