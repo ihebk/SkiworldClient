@@ -9,7 +9,7 @@ import exceptions.NoResultFoundException;
 
 public class UserDelegate {
 
-	private static final String JNDI = "/SkiWorld-ear/SkiWorld-ejb/UserCrudEJB!services.UserCrudEJBRemote";
+	private static final String JNDI = "/SkiWorld-ear/SkiWorld-ejb/UserCrudEJB!contracts.UserCrudEJBRemote";
 
 	private static UserCrudEJBRemote getProxy() {
 		return (UserCrudEJBRemote) ServiceLocator.getInstance().getProxy(JNDI);

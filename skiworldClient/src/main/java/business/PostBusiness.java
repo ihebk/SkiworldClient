@@ -10,7 +10,7 @@ public class PostBusiness {
 	public PostCrudEJBRemote getProxy() throws NamingException {
 		InitialContext ctx = new InitialContext();
 		PostCrudEJBRemote proxyPost = (PostCrudEJBRemote) ctx
-				.lookup("/SkiWorld-ear/SkiWorld-ejb/PostCrudEJB!services.PostCrudEJBRemote");
+				.lookup("/SkiWorld-ear/SkiWorld-ejb/PostCrudEJB!contracts.PostCrudEJBRemote");
 
 		return proxyPost;
 	}

@@ -19,7 +19,7 @@ public class UserBusiness {
 	public UserCrudEJBRemote getProxy() throws NamingException {
 		InitialContext ctx = new InitialContext();
 		UserCrudEJBRemote proxyUser = (UserCrudEJBRemote) ctx
-				.lookup("/SkiWorld-ear/SkiWorld-ejb/UserCrudEJB!services.UserCrudEJBRemote");
+				.lookup("/SkiWorld-ear/SkiWorld-ejb/UserCrudEJB!contracts.UserCrudEJBRemote");
 
 		return proxyUser;
 	}

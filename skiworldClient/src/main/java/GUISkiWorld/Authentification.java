@@ -193,8 +193,7 @@ public class Authentification {
 
 								window.frame.setVisible(false);
 								HomeAdmin.main(null);
-							} 
-							else {
+							} else {
 
 								JDialog dialog2 = new JDialog();
 								dialog2.setAlwaysOnTop(true);

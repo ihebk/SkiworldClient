@@ -7,7 +7,7 @@ import entities.Post;
 
 public class PostDelagate {
 
-	private static final String JNDI = "/SkiWorld-ear/SkiWorld-ejb/PostCrudEJB!services.PostCrudEJBRemote";
+	private static final String JNDI = "/SkiWorld-ear/SkiWorld-ejb/PostCrudEJB!contracts.PostCrudEJBRemote";
 
 	private static PostCrudEJBRemote getProxy() {
 		return (PostCrudEJBRemote) ServiceLocator.getInstance().getProxy(JNDI);
