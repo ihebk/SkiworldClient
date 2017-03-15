@@ -264,8 +264,8 @@ public class Register {
 		JLabel lbBackGround = new JLabel("");
 		lbBackGround.setFont(new Font("MS Reference Sans Serif", Font.PLAIN, 11));
 		lbBackGround.setForeground(new Color(0, 0, 0));
-		lbBackGround.setIcon(new ImageIcon("C:\\Users\\Haythem\\Desktop\\pic.jpg"));
-		lbBackGround.setBounds(10, 0, 731, 423);
+		lbBackGround.setIcon(new ImageIcon("src\\main\\resources\\pic.jpg"));
+		lbBackGround.setBounds(0, 0, 741, 423);
 		panel.add(lbBackGround);
 
 		JLabel h_lbl_age = new JLabel("Age");

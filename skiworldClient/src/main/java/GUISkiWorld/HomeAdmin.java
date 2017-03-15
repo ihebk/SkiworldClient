@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.mail.MessagingException;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
@@ -64,7 +63,6 @@ import business.PostBusiness;
 import business.ResortBusinessDelegate;
 import business.UserBusiness;
 import business.UserDelegate;
-import contracts.UserCrudEJBRemote;
 import entities.Post;
 import entities.Resort;
 import entities.Store;
@@ -183,17 +181,17 @@ public class HomeAdmin {
 		UsersModel usermodel = new UsersModel();
 		PostsModel postsmodel = new PostsModel();
 		AdminGUI = new JFrame();
-		AdminGUI.setBounds(100, 100, 700, 400);
+		AdminGUI.setBounds(100, 100, 885, 538);
 		AdminGUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		AdminGUI.getContentPane().setLayout(null);
 
 		JPanel panel = new JPanel();
-		panel.setBounds(0, 0, 684, 361);
+		panel.setBounds(0, 0, 869, 499);
 		AdminGUI.getContentPane().add(panel);
 		panel.setLayout(null);
 
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBounds(0, 0, 685, 360);
+		tabbedPane.setBounds(0, 0, 869, 499);
 		panel.add(tabbedPane);
 
 		JPanel h_panel_users = new JPanel();
@@ -322,6 +320,11 @@ public class HomeAdmin {
 		});
 		btnNewButton_2.setBounds(544, 57, 116, 23);
 		h_panel_users.add(btnNewButton_2);
+		
+		JLabel h_backgound = new JLabel("");
+		h_backgound.setIcon(new ImageIcon("src\\main\\resources\\wallpaper skiworld.jpg"));
+		h_backgound.setBounds(10, -45, 854, 516);
+		h_panel_users.add(h_backgound);
 		JPanel h_panel_profil = new JPanel();
 		JLabel h_lbl_image = new JLabel("");
 		h_lbl_image.setBounds(425, 2, 126, 93);
@@ -468,18 +471,8 @@ public class HomeAdmin {
 				}
 				Authentification.userConnected.setPhoto(bFile);
 				// u.setImage(bFile);
-				InitialContext ctx;
 
-				try {
-
-					ctx = new InitialContext();
-					UserCrudEJBRemote proxyUser = (UserCrudEJBRemote) ctx
-							.lookup("/SkiWorld-ear/SkiWorld-ejb/UserCrudEJB!services.UserCrudEJBRemote");
-					proxyUser.updateUser(Authentification.userConnected);
-
-				} catch (NamingException e1) {
-
-				}
+				UserDelegate.updateUser(Authentification.userConnected);
 
 			}
 		});
@@ -653,6 +646,11 @@ public class HomeAdmin {
 		h_tf_paswwordConfirm.setEnabled(false);
 		h_tf_paswwordConfirm.setBounds(452, 244, 134, 20);
 		h_panel_profil.add(h_tf_paswwordConfirm);
+		
+		JLabel label = new JLabel("");
+		label.setIcon(new ImageIcon("src\\main\\resources\\wallpaper skiworld.jpg"));
+		label.setBounds(0, 2, 864, 469);
+		h_panel_profil.add(label);
 
 		JPanel panel_1 = new JPanel();
 		tabbedPane.addTab("Reported posts", null, panel_1, null);
@@ -772,6 +770,11 @@ public class HomeAdmin {
 		});
 		h_btn_remove.setBounds(543, 236, 112, 23);
 		panel_1.add(h_btn_remove);
+		
+		JLabel lblNewLabel_2 = new JLabel("");
+		lblNewLabel_2.setIcon(new ImageIcon("src\\main\\resources\\wallpaper skiworld.jpg"));
+		lblNewLabel_2.setBounds(0, 0, 864, 471);
+		panel_1.add(lblNewLabel_2);
 
 		setTextFields();
 
@@ -1026,15 +1029,20 @@ public class HomeAdmin {
 		removeResort.setBounds(321, 288, 89, 23);
 		resorts.add(removeResort);
 
-		JLabel i_lblNewLabel_1 = new JLabel("");
-		i_lblNewLabel_1.setIcon(new ImageIcon("C:\\Users\\Iheb\\Desktop\\15755113534_f75fd1636c_k.jpg"));
-		i_lblNewLabel_1.setBounds(0, 0, 763, 335);
-		resorts.add(i_lblNewLabel_1);
-
 		searchResort = new JTextField();
 		searchResort.setBounds(456, 16, 195, 20);
 		resorts.add(searchResort);
 		searchResort.setColumns(10);
+		
+				JLabel i_lblNewLabel_1 = new JLabel("");
+				i_lblNewLabel_1.setIcon(new ImageIcon("C:\\Users\\Iheb\\Desktop\\15755113534_f75fd1636c_k.jpg"));
+				i_lblNewLabel_1.setBounds(0, 0, 763, 335);
+				resorts.add(i_lblNewLabel_1);
+				
+				JLabel lblNewLabel_3 = new JLabel("");
+				lblNewLabel_3.setIcon(new ImageIcon("src\\main\\resources\\wallpaper skiworld.jpg"));
+				lblNewLabel_3.setBounds(0, 0, 864, 471);
+				resorts.add(lblNewLabel_3);
 		searchResort.addKeyListener(new KeyListener() {
 
 			@Override
@@ -1070,19 +1078,18 @@ public class HomeAdmin {
 		statPanel.setLayout(null);
 
 		statCountResort = new JPanel();
-		statCountResort.setBounds(0, 5, 504, 482);
+		statCountResort.setBounds(10, 0, 504, 257);
 		statPanel.add(statCountResort);
 
 		statTrackP = new JPanel();
-		statTrackP.setBounds(502, 5, 557, 358);
+		statTrackP.setBounds(10, 258, 504, 213);
 		statPanel.add(statTrackP);
+		
+		JLabel lblNewLabel_4 = new JLabel("");
+		lblNewLabel_4.setBounds(0, 0, 870, 471);
+		statPanel.add(lblNewLabel_4);
+		lblNewLabel_4.setIcon(new ImageIcon("src\\main\\resources\\wallpaper skiworld.jpg"));
 		StoreModel storeModel = new StoreModel();
-		// JPanel panel = new JPanel();
-		JLabel i_label = new JLabel("New label");
-		i_label.setIcon(new ImageIcon(
-				"C:\\Users\\Iheb\\Desktop\\Ski Freestyle Wallpaper High Definition 61942 5975 Wallpaper  Cool ....jpg"));
-		i_label.setBounds(0, 0, 768, 420);
-		AdminGUI.getContentPane().add(i_label);
 
 	}
 
@@ -1105,7 +1112,7 @@ public class HomeAdmin {
 		final CategoryItemRenderer renderer = new CustomRenderer(new Paint[] { Color.red, Color.blue, Color.green,
 				Color.yellow, Color.orange, Color.cyan, Color.magenta, Color.blue });
 		ChartPanel chartp1 = new ChartPanel(chart1);
-		chartp1.setBounds(23, 11, 524, 336);
+		chartp1.setBounds(0, 0, 503, 212);
 		chartp1.setVisible(true);
 		statTrackP.removeAll();
 		statTrackP.setLayout(null);
@@ -1164,7 +1171,7 @@ public class HomeAdmin {
 
 		statCountResort.setLayout(null);
 		ChartPanel chartp = new ChartPanel(chart);
-		chartp.setBounds(-11, 11, 515, 335);
+		chartp.setBounds(-11, 0, 515, 262);
 		statCountResort.add(chartp);
 		GridBagLayout gbl_chartp = new GridBagLayout();
 		gbl_chartp.columnWidths = new int[] { 0 };
@@ -1174,5 +1181,4 @@ public class HomeAdmin {
 		chartp.setLayout(gbl_chartp);
 		statCountResort.validate();
 	}
-
 }

@@ -43,7 +43,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.naming.NamingException;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.Icon;import javax.swing.ImageIcon;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -162,6 +163,7 @@ import models.StoreModel;
 import models.TransportModel;
 import skiworldClient.SMS;
 import tk.plogitech.darksky.forecast.ForecastException;
+
 public class HomeManager {
 
 	private JFrame ManagerGUI;
@@ -184,11 +186,6 @@ public class HomeManager {
 	private JTextField txtPrice;
 	private JTextField txtDeal;
 	private JTextField txtType;
-	private JTextField textField_5;
-	private JTextField textField_6;
-	private JTextField textField_7;
-	private JTextField textField_8;
-	private JTextField textField_9;
 	private JTextField txtNameClth;
 	private JTextField txtDescClth;
 	private JTextField txtPriceClth;
@@ -205,7 +202,7 @@ public class HomeManager {
 	private String imageEqp;
 	/******************** Table ***************************/
 	private JTable tableEqp;
-	private JTable tableClth;
+
 	/******************** Model ****************************/
 	EquipementModel equipementModel = new EquipementModel();
 	ClotheModel clotheModel = new ClotheModel();
@@ -271,6 +268,7 @@ public class HomeManager {
 	private JTable i_pi_table;
 	private JLabel lblNewLabel_desc;
 	private JScrollPane scrollPaneMap;
+	private JTable tableClth;
 
 	/**
 	 * Launch the application.
@@ -306,6 +304,7 @@ public class HomeManager {
 
 	/**
 	 * Create the application.
+	 * 
 	 * @throws NamingException
 	 * @throws IOException
 	 * @throws SQLException
@@ -319,9 +318,12 @@ public class HomeManager {
 	 * @throws ForecastException
 	 */
 
-
 	public HomeManager() throws NamingException, SQLException, IOException, JAXBException, ForecastException {
 		initialize();
+		tableClth.setModel(clotheModel.getClothesModel());
+		tableEqp.setModel(equipementModel.getEquipmentsModel());
+		EventTable.setModel(pubicationModel.getEventModel());
+		fillCbResort();
 	}
 
 	private void partageFacebook(String m, String url) throws SQLException, IOException, NamingException {
@@ -334,15 +336,11 @@ public class HomeManager {
 		fbclient.publish("me/photos", FacebookType.class, BinaryAttachment.with("limitless.jpg", f),
 				Parameter.with("message", m));
 
-		tableClth.setModel(clotheModel.getClothesModel());
-		tableEqp.setModel(equipementModel.getEquipmentsModel());
-
-		fillCbResort();
-
 	}
 
 	/**
 	 * Initialize the contents of the frame.
+	 * 
 	 * @throws NamingException
 	 * @throws IOException
 	 * @throws SQLException
@@ -364,12 +362,18 @@ public class HomeManager {
 		}
 
 		ManagerGUI = new JFrame();
-		ManagerGUI.setBounds(100, 100, 784, 800);
+		ManagerGUI.setBounds(100, 100, 901, 698);
 		ManagerGUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		ManagerGUI.getContentPane().setLayout(null);
 		JPanel header = new JPanel();
-		header.setBounds(0, 11, 768, 43);
+		header.setBounds(0, 0, 885, 76);
 		ManagerGUI.getContentPane().add(header);
+		header.setLayout(null);
+		
+		JLabel lblNewLabel_2 = new JLabel("");
+		lblNewLabel_2.setIcon(new ImageIcon("src\\main\\resources\\wallpaper skiworld.jpg"));
+		lblNewLabel_2.setBounds(0, 0, 885, 76);
+		header.add(lblNewLabel_2);
 		ManagerGUI.getContentPane().setLayout(null);
 
 		// SMS.main(null, "+21624056027", "hello");
@@ -393,112 +397,46 @@ public class HomeManager {
 		// String forecast = client.forecastJsonString(request);
 		// System.out.println(forecast);
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBounds(0, 76, 768, 568);
+		tabbedPane.setBounds(0, 76, 885, 583);
 		ManagerGUI.getContentPane().add(tabbedPane);
-		JPanel Trainingpanel = new JPanel();
-		Trainingpanel.setLayout(null);
-		tabbedPane.addTab("TRAINING", null, Trainingpanel, null);
-		TrainingName = new JTextField();
-		TrainingName.setColumns(10);
-		TrainingName.setBounds(198, 23, 244, 35);
-		Trainingpanel.add(TrainingName);
-
-		JTextPane txtpnTrainingName = new JTextPane();
-		txtpnTrainingName.setText("TRAINING NAME");
-		txtpnTrainingName.setFont(new Font("Source Sans Pro", Font.ITALIC, 18));
-		txtpnTrainingName.setBounds(30, 23, 139, 25);
-		Trainingpanel.add(txtpnTrainingName);
-
-		JTextArea TrainingDescription = new JTextArea();
-		TrainingDescription.setFont(new Font("Times New Roman", Font.PLAIN, 13));
-		TrainingDescription.setBounds(198, 69, 244, 70);
-		Trainingpanel.add(TrainingDescription);
-
-		JTextPane textPane_1 = new JTextPane();
-		textPane_1.setText("DESCRIPTION");
-		textPane_1.setFont(new Font("Source Sans Pro", Font.ITALIC, 18));
-		textPane_1.setBounds(40, 74, 111, 25);
-		Trainingpanel.add(textPane_1);
-
-		JTextPane textPane_2 = new JTextPane();
-		textPane_2.setText("STARTING DATE");
-		textPane_2.setFont(new Font("Source Sans Pro", Font.ITALIC, 18));
-		textPane_2.setBounds(40, 150, 121, 25);
-		Trainingpanel.add(textPane_2);
-
-		JDateChooser TrainingStartingDate = new JDateChooser();
-		TrainingStartingDate.setDateFormatString("yyyy-MM-dd");
-		TrainingStartingDate.setBounds(220, 150, 200, 25);
-		Trainingpanel.add(TrainingStartingDate);
-
-		JTextPane textPane_3 = new JTextPane();
-		textPane_3.setText("ENDING DATE");
-		textPane_3.setFont(new Font("Source Sans Pro", Font.ITALIC, 18));
-		textPane_3.setBounds(440, 150, 111, 25);
-		Trainingpanel.add(textPane_3);
-
-		JDateChooser TrainingEndingDate = new JDateChooser();
-		TrainingEndingDate.setDateFormatString("yyyy-MM-dd");
-		TrainingEndingDate.setBounds(553, 150, 200, 25);
-		Trainingpanel.add(TrainingEndingDate);
-
-		JComboBox TrainingResort = new JComboBox();
-		TrainingResort.setBounds(553, 218, 158, 20);
-		Trainingpanel.add(TrainingResort);
-
-		JTextPane ResortCombo = new JTextPane();
-		ResortCombo.setText("RESORT");
-		ResortCombo.setFont(new Font("Source Sans Pro", Font.ITALIC, 18));
-		ResortCombo.setBounds(453, 213, 74, 25);
-		Trainingpanel.add(ResortCombo);
-
-		JComboBox TrainingType = new JComboBox();
-		TrainingType.setModel(new DefaultComboBoxModel(new String[] { "BEGINNER", "EXTREME ", "FREESTYLE" }));
-		TrainingType.setBounds(220, 213, 200, 20);
-		Trainingpanel.add(TrainingType);
-
-		JTextPane TrainingT = new JTextPane();
-		TrainingT.setText("TYPE");
-		TrainingT.setFont(new Font("Source Sans Pro", Font.ITALIC, 18));
-		TrainingT.setBounds(85, 213, 51, 25);
-		Trainingpanel.add(TrainingT);
-
+		EventTable = new JTable();
 		JPanel Store = new JPanel();
 		tabbedPane.addTab("Store", null, Store, null);
 		Store.setLayout(null);
-
+		JPanel panel = new JPanel();
+		panel.setLayout(null);
 		JTabbedPane tabbedPane_1 = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane_1.setBounds(0, 0, 875, 481);
+		tabbedPane_1.setBounds(0, 0, 875, 555);
 		Store.add(tabbedPane_1);
 		JPanel StoreEquipments = new JPanel();
 		tabbedPane_1.addTab("Equipments", null, StoreEquipments, null);
-		StoreEquipments.setLayout(null);
 		tableEqp = new JTable();
+		StoreEquipments.setLayout(null);
 		JLabel RequiredFieldType = new JLabel("Required Field");
-		RequiredFieldType.setForeground(Color.RED);
 		RequiredFieldType.setBounds(135, 204, 155, 14);
+		RequiredFieldType.setForeground(Color.RED);
 		StoreEquipments.add(RequiredFieldType);
-
+		i_pi_table = new JTable();
 		JLabel RequiredFieldDeal = new JLabel("Required Field");
-		RequiredFieldDeal.setForeground(Color.RED);
 		RequiredFieldDeal.setBounds(135, 161, 155, 14);
+		RequiredFieldDeal.setForeground(Color.RED);
 		StoreEquipments.add(RequiredFieldDeal);
 
 		JLabel RequiredFieldName = new JLabel("Required Field");
-		RequiredFieldName.setForeground(Color.RED);
 		RequiredFieldName.setBounds(135, 30, 155, 14);
+		RequiredFieldName.setForeground(Color.RED);
 		StoreEquipments.add(RequiredFieldName);
 
 		JLabel RequiredFieldDesc = new JLabel("Required Field");
-		RequiredFieldDesc.setForeground(Color.RED);
 		RequiredFieldDesc.setBounds(135, 74, 155, 14);
+		RequiredFieldDesc.setForeground(Color.RED);
 		StoreEquipments.add(RequiredFieldDesc);
 
 		JLabel RequiredFieldPrice = new JLabel("Required Field");
-		RequiredFieldPrice.setForeground(Color.RED);
 		RequiredFieldPrice.setBounds(135, 118, 155, 14);
+		RequiredFieldPrice.setForeground(Color.RED);
 		StoreEquipments.add(RequiredFieldPrice);
-		
+
 		RequiredFieldName.setVisible(false);
 		RequiredFieldDesc.setVisible(false);
 		RequiredFieldPrice.setVisible(false);
@@ -508,28 +446,31 @@ public class HomeManager {
 		tabbedPane_1.addTab("Clothes", null, StoreClothes, null);
 		StoreClothes.setLayout(null);
 		JLabel RequiredFieldNameClth = new JLabel("RequiredField");
-		RequiredFieldNameClth.setForeground(Color.RED);
 		RequiredFieldNameClth.setBounds(136, 30, 158, 14);
+		RequiredFieldNameClth.setForeground(Color.RED);
 		StoreClothes.add(RequiredFieldNameClth);
-		
+		JButton btnAddClothFK = new JButton("Add");
+		btnAddClothFK.setBounds(398, 419, 89, 23);
+		StoreClothes.add(btnAddClothFK);
+
 		JLabel RequiredFieldDescClth = new JLabel("RequiredField");
-		RequiredFieldDescClth.setForeground(Color.RED);
 		RequiredFieldDescClth.setBounds(136, 83, 158, 14);
+		RequiredFieldDescClth.setForeground(Color.RED);
 		StoreClothes.add(RequiredFieldDescClth);
-		
+
 		JLabel RequiredFieldPriceClth = new JLabel("RequiredField");
-		RequiredFieldPriceClth.setForeground(Color.RED);
 		RequiredFieldPriceClth.setBounds(136, 128, 158, 14);
+		RequiredFieldPriceClth.setForeground(Color.RED);
 		StoreClothes.add(RequiredFieldPriceClth);
-		
+
 		JLabel RequiredFieldDealClth = new JLabel("RequiredField");
-		RequiredFieldDealClth.setForeground(Color.RED);
 		RequiredFieldDealClth.setBounds(136, 172, 158, 14);
+		RequiredFieldDealClth.setForeground(Color.RED);
 		StoreClothes.add(RequiredFieldDealClth);
-		
+
 		JLabel RequiredFieldTypeClth = new JLabel("RequiredField");
-		RequiredFieldTypeClth.setForeground(Color.RED);
 		RequiredFieldTypeClth.setBounds(136, 221, 158, 14);
+		RequiredFieldTypeClth.setForeground(Color.RED);
 		StoreClothes.add(RequiredFieldTypeClth);
 		RequiredFieldNameClth.setVisible(false);
 		RequiredFieldDescClth.setVisible(false);
@@ -608,35 +549,35 @@ public class HomeManager {
 		tabbedPane.addTab("Manage Hotels", null, panel_i_hotel, null);
 
 		JLabel lblHotelName_i = new JLabel("Hotel  name :");
-		lblHotelName_i.setBounds(10, 27, 99, 25);
+		lblHotelName_i.setBounds(137, 65, 99, 25);
 		lblHotelName_i.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
 
 		JTextArea i_hoteldescription = new JTextArea();
-		i_hoteldescription.setBounds(139, 62, 204, 69);
+		i_hoteldescription.setBounds(266, 100, 204, 69);
 		panel_i_hotel.add(i_hoteldescription);
 		JSpinner i_tr_price = new JSpinner();
 		i_tr_price.setModel(new SpinnerNumberModel(new Float(1), new Float(1), null, new Float(1)));
-		i_tr_price.setBounds(139, 207, 123, 20);
+		i_tr_price.setBounds(192, 268, 123, 20);
 
 		i_hotelname = new JTextField();
-		i_hotelname.setBounds(139, 31, 149, 20);
+		i_hotelname.setBounds(266, 69, 149, 20);
 		i_hotelname.setColumns(10);
 
 		JComboBox i_tr_type_combo = new JComboBox();
 		i_tr_type_combo.setModel(new DefaultComboBoxModel(new String[] { "Car", "JetSki", "Sky tram" }));
-		i_tr_type_combo.setBounds(139, 15, 204, 20);
+		i_tr_type_combo.setBounds(192, 76, 204, 20);
 
 		JComboBox i_hotel_combo = new JComboBox();
-		i_hotel_combo.setBounds(139, 238, 113, 20);
+		i_hotel_combo.setBounds(266, 276, 113, 20);
 		panel_i_hotel.add(i_hotel_combo);
 		JComboBox i_tr_resort_combo = new JComboBox();
-		i_tr_resort_combo.setBounds(139, 238, 113, 20);
+		i_tr_resort_combo.setBounds(192, 299, 113, 20);
 		JComboBox i_pi_resortcombo = new JComboBox();
 
 		i_table_hotel = new JTable();
 		i_pi_table = new JTable();
 		i_tr_table = new JTable();
-
+		JButton UpdateEvent = new JButton("UPDATE");
 		i_table_hotel.setModel(hotelmodel.hotelModel());
 		i_tr_table.setModel(transportmodel.transportModel());
 		i_pi_table.setModel(pistemodel.pisteModel());
@@ -646,81 +587,25 @@ public class HomeManager {
 		transportmodel.fillResortComboBox(i_tr_resort_combo);
 
 		JLabel i_lblDescription = new JLabel("Description :");
-		i_lblDescription.setBounds(10, 60, 99, 25);
+		i_lblDescription.setBounds(137, 98, 99, 25);
 		i_lblDescription.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
 
 		JLabel i_lblCapacity = new JLabel("Capacity :");
-		i_lblCapacity.setBounds(10, 144, 99, 25);
+		i_lblCapacity.setBounds(137, 182, 99, 25);
 		i_lblCapacity.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
 
 		JSpinner i_hotelcapacity = new JSpinner();
 		i_hotelcapacity.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
-		i_hotelcapacity.setBounds(139, 148, 123, 20);
+		i_hotelcapacity.setBounds(266, 186, 123, 20);
 
 		JLabel i_lblRating = new JLabel("Image :");
-		i_lblRating.setBounds(10, 186, 99, 25);
+		i_lblRating.setBounds(137, 224, 99, 25);
 		i_lblRating.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
 
 		JButton i_btnNewButton = new JButton("Add");
-		i_btnNewButton.setBounds(39, 288, 99, 23);
+		i_btnNewButton.setBounds(164, 364, 99, 23);
 		i_btnNewButton.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		i_btnNewButton.addActionListener(new ActionListener() {
-			@SuppressWarnings("static-access")
-			public void actionPerformed(ActionEvent e) {
 
-				if (i_hotelname.getText().equals("")) {
-					JOptionPane.showMessageDialog(null, "Please Fill the name space");
-					return;
-				}
-				if (i_hoteldescription.getText().equals("")) {
-					JOptionPane.showMessageDialog(null, "Please Fill the Description space");
-					return;
-				}
-				if (i_imagepath.getText().equals("")) {
-					JOptionPane.showMessageDialog(null, "Please select a photo");
-					return;
-				}
-
-				for (int i = 0; i < hotelmodel.getAll().size(); i++) {
-
-					if (i_hotelname.getText().equals(hotelmodel.getAll().get(i).getName())) {
-						JOptionPane.showMessageDialog(null, "a Hotel with that name already exists");
-						return;
-
-					}
-
-				}
-
-				Hotel hotel = new Hotel();
-				hotel.setDescription(i_hoteldescription.getText());
-				hotel.setName(i_hotelname.getText());
-				hotel.setCapacity((Integer) i_hotelcapacity.getValue());
-				hotel.setResort(ResortBusinessDelegate.findResortByLabel(i_hotel_combo.getSelectedItem().toString()));
-
-				File file = new File(image);
-				byte[] bFile = new byte[(int) file.length()];
-
-				try {
-					FileInputStream fileInputStream = new FileInputStream(file);
-					fileInputStream.read(bFile);
-					fileInputStream.close();
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
-				hotel.setImage(bFile);
-
-				try {
-
-					hotelDelegate.addHotel(hotel);
-
-					i_table_hotel.setModel(hotelmodel.hotelModel());
-				} catch (SQLException | IOException | NamingException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-
-			}
-		});
 		panel_i_hotel.setLayout(null);
 		panel_i_hotel.add(lblHotelName_i);
 		panel_i_hotel.add(i_hotelname);
@@ -731,33 +616,13 @@ public class HomeManager {
 		panel_i_hotel.add(i_btnNewButton);
 
 		JButton i_chooseimage = new JButton("choose image");
-		i_chooseimage.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
 
-				JFileChooser ch = new JFileChooser();
-				ch.showOpenDialog(null);
-				File f = ch.getSelectedFile();
-				if (f != null) {
-					image = f.getAbsolutePath();
-
-					i_imagepath.setText(image);
-				}
-
-				else {
-
-					image = "src//main//resources//imgs//defaulthotel.jpg";
-					i_imagepath.setText(image);
-				}
-
-			}
-
-		});
-		i_chooseimage.setBounds(139, 186, 113, 23);
+		i_chooseimage.setBounds(266, 224, 113, 23);
 		panel_i_hotel.add(i_chooseimage);
 
 		i_imagepath = new JTextField();
 		i_imagepath.setEditable(false);
-		i_imagepath.setBounds(261, 187, 148, 20);
+		i_imagepath.setBounds(388, 225, 148, 20);
 		panel_i_hotel.add(i_imagepath);
 		i_imagepath.setColumns(10);
 
@@ -765,14 +630,14 @@ public class HomeManager {
 
 		scrollPane.setBounds(424, 11, 329, 165);
 		JLabel i_imgdisplay = new JLabel("");
-		i_imgdisplay.setBounds(516, 187, 150, 130);
+		i_imgdisplay.setBounds(598, 219, 150, 130);
 		i_imgdisplay.setIcon((Icon) img_display);
 		panel_i_hotel.add(i_imgdisplay);
 
 		table = new JTable();
 		JScrollPane i_scrollPane = new JScrollPane();
 
-		i_scrollPane.setBounds(424, 11, 329, 165);
+		i_scrollPane.setBounds(507, 49, 329, 165);
 		panel_i_hotel.add(i_scrollPane);
 
 		JLabel lblNewLabel_1 = new JLabel("New label");
@@ -781,264 +646,75 @@ public class HomeManager {
 
 		JPanel managerProfilePanel = new JPanel();
 		JLabel h_lbl_image = new JLabel("");
-		h_lbl_image.setBounds(452, 8, 99, 96);
-		managerProfilePanel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				try {
-					FileOutputStream fos = new FileOutputStream("src//main//resources//imgs//user.jpg");
-					fos.write(Authentification.userConnected.getPhoto());
-					fos.close();
-					ImageIcon imgThisImg2 = new ImageIcon("src//main//resources//imgs//user.jpg");
-					Image h_image = imgThisImg2.getImage(); // transform it
-					Image h_newimg = h_image.getScaledInstance(150, 130, java.awt.Image.SCALE_SMOOTH); // scale
-																										// it
-																										// the
-																										// smooth
-																										// way
-					ImageIcon imgThisImg3 = new ImageIcon(h_newimg); // transform
-																		// it
-																		// back
-					h_lbl_image.setIcon(imgThisImg3);
-					imgThisImg2.getImage().flush();
-				} catch (Exception e1) {
-					// System.out.println("image vide" + e1);
-				}
-			}
-		});
+		h_lbl_image.setBounds(522, 46, 99, 96);
+
 		tabbedPane.addTab("Profil", null, managerProfilePanel, null);
-		i_table_hotel.addMouseListener(new MouseAdapter() {
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-
-				int index = i_table_hotel.getSelectedRow();
-				hotelrow = hotelmodel.hotellist.get(index);
-
-				try {
-					FileOutputStream fos = new FileOutputStream("src//main//resources//imgs//hotel.jpg");
-					fos.write(hotelrow.getImage());
-					fos.close();
-					ImageIcon imgThisImg1 = new ImageIcon("src//main//resources//imgs//hotel.jpg");
-					Image image = imgThisImg1.getImage(); // transform it
-					Image newimg = image.getScaledInstance(150, 130, java.awt.Image.SCALE_SMOOTH); // scale
-																									// it
-																									// the
-																									// smooth
-																									// way
-					ImageIcon imgThisImg = new ImageIcon(newimg); // transform
-																	// it back
-					i_imgdisplay.setIcon(imgThisImg);
-					imgThisImg.getImage().flush();
-
-					// modify table
-
-					i_hotelname.setText(hotelrow.getName());
-					i_hoteldescription.setText(hotelrow.getDescription());
-					i_hotelcapacity.setValue(hotelrow.getCapacity());
-
-					// end modif
-
-				} catch (Exception e3) {
-					e3.printStackTrace();
-				}
-			}
-
-		});
 
 		i_scrollPane.setViewportView(i_table_hotel);
 
 		JButton i_edit = new JButton("Edit");
-		i_edit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				hotelrow = null;
-				int index = i_table_hotel.getSelectedRow();
-
-				if (index != -1) {
-
-					hotelrow = hotelmodel.hotellist.get(index);
-
-					if (i_hotelname.getText().equals("")) {
-						JOptionPane.showMessageDialog(null, "Please Fill the name space");
-						return;
-					}
-					if (i_hoteldescription.getText().equals("")) {
-						JOptionPane.showMessageDialog(null, "Please Fill the Description space");
-						return;
-					}
-					if (i_imagepath.getText().equals("")) {
-						JOptionPane.showMessageDialog(null, "Please select a photo");
-						return;
-					}
-
-					Hotel hotel = new Hotel();
-					hotel.setIdHotel(hotelrow.getIdHotel());
-					hotel.setDescription(i_hoteldescription.getText());
-					hotel.setName(i_hotelname.getText());
-					hotel.setCapacity((Integer) i_hotelcapacity.getValue());
-					hotel.setResort(
-							ResortBusinessDelegate.findResortByLabel(i_hotel_combo.getSelectedItem().toString()));
-
-					File file = new File(image);
-					byte[] bFile = new byte[(int) file.length()];
-
-					try {
-						FileInputStream fileInputStream = new FileInputStream(file);
-						fileInputStream.read(bFile);
-						fileInputStream.close();
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
-					hotel.setImage(bFile);
-
-					try {
-						hotelDelegate.updateHotel(hotel);
-						i_table_hotel.setModel(hotelmodel.hotelModel());
-					} catch (SQLException | IOException | NamingException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-
-				} else {
-					JOptionPane.showMessageDialog(null, "Please select a hotel to modify");
-				}
-			}
-		});
+		
 
 		i_edit.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		i_edit.setBounds(183, 288, 89, 23);
+		i_edit.setBounds(308, 364, 89, 23);
 		panel_i_hotel.add(i_edit);
 
 		JButton i_remove = new JButton("Remove");
-		i_remove.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				hotelrow = null;
-				int index = i_table_hotel.getSelectedRow();
-
-				if (index != -1) {
-
-					hotelrow = hotelmodel.hotellist.get(index);
-
-					try {
-						hotelDelegate.deleteHotel(hotelrow.getIdHotel());
-						SMS.main(null, "+21624056027",
-								"The hotel named " + hotelrow.getName().toUpperCase() + " was removed ! :)");
-
-						i_table_hotel.setModel(hotelmodel.hotelModel());
-					} catch (SQLException | IOException | NamingException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-
-				} else {
-					JOptionPane.showMessageDialog(null, "Please select a hotel to remove");
-				}
-
-			}
-		});
+		
 		i_remove.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		i_remove.setBounds(321, 288, 89, 23);
+		i_remove.setBounds(446, 364, 89, 23);
 		panel_i_hotel.add(i_remove);
 
 		JLabel lblResort = new JLabel("Resort :");
 		lblResort.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		lblResort.setBounds(10, 234, 99, 25);
+		lblResort.setBounds(137, 272, 99, 25);
 		panel_i_hotel.add(lblResort);
 
-		JLabel i_backgH = new JLabel("New label");
-		i_backgH.setIcon(new ImageIcon(
-				"C:\\Users\\Iheb\\Desktop\\Ski Freestyle Wallpaper High Definition 61942 5975 Wallpaper  Cool ....jpg"));
-		i_backgH.setBounds(0, 0, 763, 316);
-		panel_i_hotel.add(i_backgH);
+		JLabel i_background = new JLabel("New label");
+		i_background.setIcon(new ImageIcon("src\\main\\resources\\wallpaper skiworld.jpg"));
+		i_background.setBounds(0, 0, 880, 555);
+		panel_i_hotel.add(i_background);
 
 		JPanel panel_i_trans = new JPanel();
 		panel_i_trans.setLayout(null);
 		tabbedPane.addTab("Manage Transport", null, panel_i_trans, null);
 
 		JTextArea i_tr_descriptiont = new JTextArea();
-		i_tr_descriptiont.setBounds(139, 46, 204, 69);
+		i_tr_descriptiont.setBounds(192, 107, 204, 69);
 		panel_i_trans.add(i_tr_descriptiont);
 
 		JLabel i_type = new JLabel("Type :");
 		i_type.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		i_type.setBounds(10, 11, 99, 25);
+		i_type.setBounds(63, 72, 99, 25);
 		panel_i_trans.add(i_type);
 
 		JLabel i_desc = new JLabel("Description :");
 		i_desc.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		i_desc.setBounds(10, 60, 99, 25);
+		i_desc.setBounds(63, 121, 99, 25);
 		panel_i_trans.add(i_desc);
 
 		JLabel i_lb = new JLabel("Capacity :");
 		i_lb.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		i_lb.setBounds(10, 126, 99, 25);
+		i_lb.setBounds(63, 187, 99, 25);
 		panel_i_trans.add(i_lb);
 
 		JSpinner i_tr_cap = new JSpinner();
 		i_tr_cap.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
-		i_tr_cap.setBounds(139, 126, 123, 20);
+		i_tr_cap.setBounds(192, 187, 123, 20);
 		panel_i_trans.add(i_tr_cap);
 
 		JLabel i_label_3 = new JLabel("Image :");
 		i_label_3.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		i_label_3.setBounds(10, 156, 99, 25);
+		i_label_3.setBounds(63, 217, 99, 25);
 		panel_i_trans.add(i_label_3);
 
 		panel_i_trans.add(i_tr_resort_combo);
 		panel_i_trans.add(i_tr_type_combo);
 
 		JButton i_tr_add = new JButton("Add");
-		i_tr_add.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				if (i_tr_descriptiont.getText().equals("")) {
-					JOptionPane.showMessageDialog(null, "Please Fill the description space space");
-					return;
-				}
-				if (i_tr_path.getText().equals("")) {
-					JOptionPane.showMessageDialog(null, "Please select a photo");
-					return;
-				}
-				if (i_tr_price.getValue().equals("")) {
-					JOptionPane.showMessageDialog(null, "Please select a photo");
-					return;
-				}
-
-				Transport transport = new Transport();
-				transport.setType(i_tr_type_combo.getSelectedItem().toString());
-
-				transport.setDescription(i_tr_descriptiont.getText());
-				transport.setBookingPrice((float) i_tr_price.getValue());
-				transport.setCapacity((Integer) i_tr_cap.getValue());
-				transport.setResort(
-						ResortBusinessDelegate.findResortByLabel(i_tr_resort_combo.getSelectedItem().toString()));
-
-				File file = new File(image);
-				byte[] bFile = new byte[(int) file.length()];
-
-				try {
-					FileInputStream fileInputStream = new FileInputStream(file);
-					fileInputStream.read(bFile);
-					fileInputStream.close();
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
-				transport.setImage(bFile);
-
-				try {
-					transportDelegate.addTransport(transport);
-					i_tr_table.setModel(transportmodel.transportModel());
-
-				} catch (SQLException | IOException | NamingException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-
-				}
-
-			}
-		});
+		
 		i_tr_add.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		i_tr_add.setBounds(39, 288, 99, 23);
+		i_tr_add.setBounds(92, 379, 99, 23);
 		panel_i_trans.add(i_tr_add);
 
 		JButton i_tr_choose_img = new JButton("choose image");
@@ -1062,18 +738,18 @@ public class HomeManager {
 
 			}
 		});
-		i_tr_choose_img.setBounds(139, 157, 113, 23);
+		i_tr_choose_img.setBounds(192, 218, 113, 23);
 		panel_i_trans.add(i_tr_choose_img);
 
 		i_tr_path = new JTextField();
 		i_tr_path.setEditable(false);
 		i_tr_path.setColumns(10);
-		i_tr_path.setBounds(262, 160, 148, 20);
+		i_tr_path.setBounds(315, 221, 148, 20);
 		panel_i_trans.add(i_tr_path);
 		panel_i_trans.add(i_tr_price);
 
 		JLabel i_tr_image = new JLabel("");
-		i_tr_image.setBounds(516, 187, 150, 130);
+		i_tr_image.setBounds(569, 248, 150, 130);
 		panel_i_trans.add(i_tr_image);
 
 		JButton i_tr_edit = new JButton("Edit");
@@ -1124,7 +800,7 @@ public class HomeManager {
 			}
 		});
 		i_tr_edit.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		i_tr_edit.setBounds(183, 288, 89, 23);
+		i_tr_edit.setBounds(236, 379, 89, 23);
 		panel_i_trans.add(i_tr_edit);
 
 		JButton i_tr_remove = new JButton("Remove");
@@ -1154,16 +830,16 @@ public class HomeManager {
 
 		});
 		i_tr_remove.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		i_tr_remove.setBounds(321, 288, 89, 23);
+		i_tr_remove.setBounds(374, 379, 89, 23);
 		panel_i_trans.add(i_tr_remove);
 
 		JLabel label_5 = new JLabel("Resort :");
 		label_5.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		label_5.setBounds(10, 234, 99, 25);
+		label_5.setBounds(63, 295, 99, 25);
 		panel_i_trans.add(label_5);
 
 		JScrollPane i_tr_scrollPane = new JScrollPane();
-		i_tr_scrollPane.setBounds(420, 11, 333, 157);
+		i_tr_scrollPane.setBounds(473, 72, 333, 157);
 		panel_i_trans.add(i_tr_scrollPane);
 
 		i_tr_table.addMouseListener(new MouseAdapter() {
@@ -1213,212 +889,316 @@ public class HomeManager {
 
 		JLabel i_lblBookingprice = new JLabel("Booking Price :");
 		i_lblBookingprice.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		i_lblBookingprice.setBounds(10, 203, 119, 25);
+		i_lblBookingprice.setBounds(63, 264, 119, 25);
 		panel_i_trans.add(i_lblBookingprice);
 
-		JLabel i_lblDt = new JLabel("DT");
+		JLabel i_lblDt = new JLabel("$");
 		i_lblDt.setFont(new Font("Source Sans Pro", Font.BOLD, 16));
-		i_lblDt.setBounds(268, 208, 46, 14);
+		i_lblDt.setBounds(321, 269, 46, 14);
 		panel_i_trans.add(i_lblDt);
 
 		JLabel i_backg = new JLabel("");
-		i_backg.setIcon(new ImageIcon(
-				"C:\\Users\\Iheb\\Desktop\\Ski Freestyle Wallpaper High Definition 61942 5975 Wallpaper  Cool ....jpg"));
-		i_backg.setBounds(0, 0, 763, 316);
+		i_backg.setIcon(new ImageIcon("src\\main\\resources\\wallpaper skiworld.jpg"));
+		i_backg.setBounds(0, 0, 880, 555);
 		panel_i_trans.add(i_backg);
 
 		storeTable = new JTable();
+		JPanel Trainingpanel = new JPanel();
+		Trainingpanel.setLayout(null);
+		tabbedPane.addTab("TRAINING", null, Trainingpanel, null);
+		TrainingName = new JTextField();
+		TrainingName.setColumns(10);
+		TrainingName.setBounds(252, 61, 244, 35);
+		Trainingpanel.add(TrainingName);
+		JButton btnDelete_Clothe = new JButton("Delete");
+		JButton btnAddEvent = new JButton("ADD EVENT");
+
+		JTextPane txtpnTrainingName = new JTextPane();
+		txtpnTrainingName.setText("TRAINING NAME");
+		txtpnTrainingName.setFont(new Font("Source Sans Pro", Font.ITALIC, 18));
+		txtpnTrainingName.setBounds(84, 61, 139, 25);
+		Trainingpanel.add(txtpnTrainingName);
+
+		JTextArea TrainingDescription = new JTextArea();
+		TrainingDescription.setFont(new Font("Times New Roman", Font.PLAIN, 13));
+		TrainingDescription.setBounds(252, 107, 244, 70);
+		Trainingpanel.add(TrainingDescription);
+
+		JTextPane textPane_1 = new JTextPane();
+		textPane_1.setText("DESCRIPTION");
+		textPane_1.setFont(new Font("Source Sans Pro", Font.ITALIC, 18));
+		textPane_1.setBounds(94, 112, 111, 25);
+		Trainingpanel.add(textPane_1);
+
+		JTextPane textPane_2 = new JTextPane();
+		textPane_2.setText("STARTING DATE");
+		textPane_2.setFont(new Font("Source Sans Pro", Font.ITALIC, 18));
+		textPane_2.setBounds(94, 188, 121, 25);
+		Trainingpanel.add(textPane_2);
+	
+
+		JDateChooser TrainingStartingDate = new JDateChooser();
+		TrainingStartingDate.setDateFormatString("yyyy-MM-dd");
+		TrainingStartingDate.setBounds(274, 188, 200, 25);
+		Trainingpanel.add(TrainingStartingDate);
+
+		JTextPane textPane_3 = new JTextPane();
+		textPane_3.setText("ENDING DATE");
+		textPane_3.setFont(new Font("Source Sans Pro", Font.ITALIC, 18));
+		textPane_3.setBounds(494, 188, 111, 25);
+		Trainingpanel.add(textPane_3);
+
+		JDateChooser TrainingEndingDate = new JDateChooser();
+		TrainingEndingDate.setDateFormatString("yyyy-MM-dd");
+		TrainingEndingDate.setBounds(607, 188, 200, 25);
+		Trainingpanel.add(TrainingEndingDate);
+
+		JComboBox TrainingResort = new JComboBox();
+		TrainingResort.setBounds(607, 256, 158, 20);
+		Trainingpanel.add(TrainingResort);
+
+		JTextPane ResortCombo = new JTextPane();
+		ResortCombo.setText("RESORT");
+		ResortCombo.setFont(new Font("Source Sans Pro", Font.ITALIC, 18));
+		ResortCombo.setBounds(507, 251, 74, 25);
+		Trainingpanel.add(ResortCombo);
+
+		JComboBox TrainingType = new JComboBox();
+		TrainingType.setModel(new DefaultComboBoxModel(new String[] { "BEGINNER", "EXTREME ", "FREESTYLE" }));
+		TrainingType.setBounds(274, 251, 200, 20);
+		JButton TrainingShare = new JButton("Share on Facebook");
+		Trainingpanel.add(TrainingType);
+		TrainingShare.setBounds(536, 272, 135, 27);
+		panel.add(TrainingShare);
+		TrainingTable = new JTable();
+		JPanel Eventspanel = new JPanel();
+		tabbedPane.addTab("EVENTS", null, Eventspanel, null);
+		Eventspanel.setLayout(null);
+
+		EventName = new JTextField();
+		EventName.setBounds(198, 23, 244, 35);
+		Eventspanel.add(EventName);
+		EventName.setColumns(10);
+
+		JTextPane txtpnEventName = new JTextPane();
+		txtpnEventName.setEditable(false);
+		txtpnEventName.setFont(new Font("Source Sans Pro", Font.ITALIC, 18));
+		txtpnEventName.setText("EVENT NAME");
+		txtpnEventName.setBounds(58, 23, 111, 25);
+		Eventspanel.add(txtpnEventName);
+
+		JTextArea EventDescription = new JTextArea();
+		EventDescription.setBounds(198, 69, 244, 70);
+		Eventspanel.add(EventDescription);
+		btnAddEvent.setBounds(572, 197, 89, 23);
+		Eventspanel.add(btnAddEvent);
+
+		EventTable.setBounds(10, 49, 399, 198);
+
+		
+
+		JTextPane txtpnDescription = new JTextPane();
+		txtpnDescription.setEditable(false);
+		txtpnDescription.setText("DESCRIPTION");
+		txtpnDescription.setFont(new Font("Source Sans Pro", Font.ITALIC, 18));
+		txtpnDescription.setBounds(58, 69, 111, 25);
+		Eventspanel.add(txtpnDescription);
+
+		JTextPane txtpnStartingDate = new JTextPane();
+		txtpnStartingDate.setText("STARTING DATE");
+		txtpnStartingDate.setFont(new Font("Source Sans Pro", Font.ITALIC, 18));
+		txtpnStartingDate.setBounds(58, 150, 121, 25);
+		Eventspanel.add(txtpnStartingDate);
+
+		JDateChooser dateStart = new JDateChooser();
+		dateStart.setDateFormatString("yyyy-MM-dd");
+		dateStart.setBounds(220, 150, 200, 25);
+		Eventspanel.add(dateStart);
+
+		JTextPane txtpnEndingDate = new JTextPane();
+		txtpnEndingDate.setText("ENDING DATE");
+		txtpnEndingDate.setFont(new Font("Source Sans Pro", Font.ITALIC, 18));
+		txtpnEndingDate.setBounds(58, 197, 121, 25);
+		Eventspanel.add(txtpnEndingDate);
+
+		JDateChooser dateEnd = new JDateChooser();
+		dateEnd.setDateFormatString("yyyy-MM-dd");
+		dateEnd.setBounds(220, 197, 200, 25);
+		Eventspanel.add(dateEnd);
+
+		JComboBox EventType = new JComboBox();
+		EventType.setModel(
+				new DefaultComboBoxModel(new String[] { "FAMILY", "EXTREME SPORTS", "NIGHT PARTY", "SKI CHALLENGE" }));
+		EventType.setBounds(220, 233, 200, 20);
+		Eventspanel.add(EventType);
+
+		JTextPane txtpnType = new JTextPane();
+		txtpnType.setText("TYPE");
+		txtpnType.setFont(new Font("Source Sans Pro", Font.ITALIC, 18));
+		txtpnType.setBounds(85, 233, 51, 25);
+		Eventspanel.add(txtpnType);
+
+		JComboBox EventResort = new JComboBox();
+		EventResort.setBounds(584, 71, 142, 20);
+		Eventspanel.add(EventResort);
+
+		JPanel AllEventspanel = new JPanel();
+		tabbedPane.addTab("All EVENTS", null, AllEventspanel, null);
+		AllEventspanel.setLayout(null);
+		EventNameShow = new JTextField();
+		EventNameShow.setBounds(452, 14, 244, 30);
+		AllEventspanel.add(EventNameShow);
+		EventNameShow.setColumns(10);
+		EventTable.setFont(new Font("Arial", Font.BOLD, 12));
+		EventTable.setBorder(new LineBorder(new Color(0, 0, 0)));
+		AllEventspanel.add(EventTable);
+		
+
+		JDateChooser StartingDateShow = new JDateChooser();
+		StartingDateShow.setDateFormatString("yyyy-MM-dd");
+		StartingDateShow.setBounds(434, 170, 135, 25);
+		AllEventspanel.add(StartingDateShow);
+
+		JDateChooser EndingDateShow = new JDateChooser();
+		EndingDateShow.setDateFormatString("yyyy-MM-dd");
+		EndingDateShow.setBounds(590, 170, 149, 25);
+		AllEventspanel.add(EndingDateShow);
+
+		JTextArea EventDescriptionShow = new JTextArea();
+		EventDescriptionShow.setBounds(452, 77, 244, 70);
+		AllEventspanel.add(EventDescriptionShow);
+
+		// pubicationModel.fillEventResortComboBox
+		pubicationModel.fillEventResortComboBox(EventResort);
+		
+
+		JButton EventAddPicture = new JButton("ADD PICTURE");
+
+		EventAddPicture.setBounds(463, 29, 104, 23);
+		Eventspanel.add(EventAddPicture);
+
+		EventPicturePath = new JTextField();
+		EventPicturePath.setBounds(584, 30, 142, 20);
+		Eventspanel.add(EventPicturePath);
+		EventPicturePath.setColumns(10);
+		
+		JLabel r2_background = new JLabel("");
+		r2_background.setIcon(new ImageIcon("src\\main\\resources\\wallpaper skiworld.jpg"));
+		r2_background.setBounds(0, 0, 880, 555);
+		Eventspanel.add(r2_background);
+		panel.setBounds(710, 14, 1, 1);
+		panel.setLayout(null);
+
+		StoreClothes.add(btnAddClothFK);
+
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(329, 14, 507, 373);
+		StoreClothes.add(scrollPane_1);
+		JLabel lblImgClth = new JLabel("");
+		lblImgClth.setBounds(89, 293, 205, 88);
+		StoreClothes.add(lblImgClth);
+		tableClth = new JTable();
+		JComboBox cbxStoreClth = new JComboBox();
+		cbxStoreClth.setBounds(136, 246, 158, 20);
+		StoreClothes.add(cbxStoreClth);
+
+		JTextPane TrainingT = new JTextPane();
+		TrainingT.setText("TYPE");
+		TrainingT.setFont(new Font("Source Sans Pro", Font.ITALIC, 18));
+		TrainingT.setBounds(139, 251, 51, 25);
+		Trainingpanel.add(TrainingT);
+		trainingModel.fillTrainingResortComboBox(TrainingResort);
+		JButton AddTraining = new JButton("ADD TRAINING");
+
+		AddTraining.setBounds(307, 303, 131, 23);
+		Trainingpanel.add(AddTraining);
+		
+		JLabel r_background = new JLabel("");
+		r_background.setIcon(new ImageIcon("src\\main\\resources\\wallpaper skiworld.jpg"));
+		r_background.setBounds(0, 0, 880, 555);
+		Trainingpanel.add(r_background);
 		JPanel panel_i_piste = new JPanel();
 		panel_i_piste.setLayout(null);
 		tabbedPane.addTab("Manage Pistes", null, panel_i_piste, null);
 
 		JTextArea i_pi_description = new JTextArea();
-		i_pi_description.setBounds(139, 62, 204, 69);
+		i_pi_description.setBounds(221, 132, 204, 69);
 		panel_i_piste.add(i_pi_description);
 
 		JLabel lblPisteName = new JLabel("Piste name :");
 		lblPisteName.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		lblPisteName.setBounds(10, 27, 99, 25);
+		lblPisteName.setBounds(92, 97, 99, 25);
 		panel_i_piste.add(lblPisteName);
 
 		i_pi_name = new JTextField();
 		i_pi_name.setColumns(10);
-		i_pi_name.setBounds(139, 31, 149, 20);
+		i_pi_name.setBounds(221, 101, 149, 20);
 		panel_i_piste.add(i_pi_name);
-
+		JButton btnEdit_Clothe = new JButton("Edit");
+		btnEdit_Clothe.setBounds(532, 419, 89, 23);
+		StoreClothes.add(btnEdit_Clothe);
 		JComboBox i_pi_typecombo = new JComboBox();
 		i_pi_typecombo.setModel(new DefaultComboBoxModel(new String[] { "Training", "Daily Activities" }));
-		i_pi_typecombo.setBounds(139, 148, 113, 20);
+		i_pi_typecombo.setBounds(221, 218, 113, 20);
 		panel_i_piste.add(i_pi_typecombo);
 
 		JLabel i_pi_lblType = new JLabel("Type :");
 		i_pi_lblType.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		i_pi_lblType.setBounds(10, 144, 99, 25);
+		i_pi_lblType.setBounds(92, 214, 99, 25);
 		panel_i_piste.add(i_pi_lblType);
 
 		JLabel i_deslabel_1 = new JLabel("Description :");
 		i_deslabel_1.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		i_deslabel_1.setBounds(10, 60, 99, 25);
+		i_deslabel_1.setBounds(92, 130, 99, 25);
 		panel_i_piste.add(i_deslabel_1);
 
 		JLabel i_pi_l = new JLabel("Image :");
 		i_pi_l.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		i_pi_l.setBounds(10, 186, 99, 25);
+		i_pi_l.setBounds(92, 256, 99, 25);
 		panel_i_piste.add(i_pi_l);
 
-		i_pi_resortcombo.setBounds(139, 238, 113, 20);
+		i_pi_resortcombo.setBounds(221, 308, 113, 20);
 		panel_i_piste.add(i_pi_resortcombo);
 
 		JButton i_pi_add = new JButton("Add");
 
-		i_pi_add.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (i_pi_name.getText().equals("")) {
-					JOptionPane.showMessageDialog(null, "Please Fill the name space");
-					return;
-				}
-
-				if (i_pi_description.getText().equals("")) {
-					JOptionPane.showMessageDialog(null, "Please Fill the description space");
-					return;
-				}
-				if (i_pi_path.getText().equals("")) {
-					JOptionPane.showMessageDialog(null, "Please select a photo");
-					return;
-				}
-
-				for (int i = 0; i < pistemodel.getAll().size(); i++) {
-
-					if (i_pi_name.getText().equals(pistemodel.getAll().get(i).getName())) {
-						JOptionPane.showMessageDialog(null, "a Piste with that name already exists");
-						return;
-
-					}
-
-				}
-
-				Piste piste = new Piste();
-				piste.setDescription(i_pi_description.getText());
-				piste.setName(i_pi_name.getText());
-				piste.setType(i_pi_typecombo.getSelectedItem().toString());
-				piste.setResort(
-						ResortBusinessDelegate.findResortByLabel(i_pi_resortcombo.getSelectedItem().toString()));
-
-				File file = new File(image);
-				byte[] bFile = new byte[(int) file.length()];
-
-				try {
-					FileInputStream fileInputStream = new FileInputStream(file);
-					fileInputStream.read(bFile);
-					fileInputStream.close();
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
-				piste.setImage(bFile);
-
-				try {
-					pisteDelegate.addPiste(piste);
-
-					i_pi_table.setModel(pistemodel.pisteModel());
-				} catch (SQLException | IOException | NamingException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-
-			}
-
-		});
 		i_pi_add.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		i_pi_add.setBounds(39, 288, 99, 23);
+		i_pi_add.setBounds(119, 373, 99, 23);
 		panel_i_piste.add(i_pi_add);
 
 		JButton i_pi_chooseimage = new JButton("choose image");
-		i_pi_chooseimage.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				JFileChooser ch = new JFileChooser();
-				ch.showOpenDialog(null);
-				File f = ch.getSelectedFile();
-				if (f != null) {
-					image = f.getAbsolutePath();
-
-					i_pi_path.setText(image);
-				}
-
-				else {
-
-					image = "src//main//resources//imgs//defaultpiste.jpg";
-					i_pi_path.setText(image);
-				}
-
-				i_pi_path.setText(image);
-
-			}
-		});
-		i_pi_chooseimage.setBounds(139, 186, 113, 23);
+		
+		i_pi_chooseimage.setBounds(221, 256, 113, 23);
 		panel_i_piste.add(i_pi_chooseimage);
 
 		i_pi_path = new JTextField();
 		i_pi_path.setEditable(false);
 		i_pi_path.setColumns(10);
-		i_pi_path.setBounds(261, 187, 148, 20);
+		i_pi_path.setBounds(343, 257, 148, 20);
 		panel_i_piste.add(i_pi_path);
 
 		JLabel i_pi_image = new JLabel("");
-		i_pi_image.setBounds(516, 187, 150, 130);
+		i_pi_image.setBounds(613, 251, 150, 130);
 		panel_i_piste.add(i_pi_image);
-
+		JButton btnImageClth = new JButton("image");
+		btnImageClth.setBounds(115, 419, 89, 23);
+		StoreClothes.add(btnImageClth);
 		JScrollPane i_pi_scrollPane = new JScrollPane();
-		i_pi_scrollPane.setBounds(424, 11, 329, 165);
+		i_pi_scrollPane.setBounds(506, 81, 329, 165);
 		panel_i_piste.add(i_pi_scrollPane);
-
-		i_pi_table = new JTable();
-		i_pi_table.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-
-				int pi_index = i_pi_table.getSelectedRow();
-				pirow = pistemodel.pistelist.get(pi_index);
-
-				try {
-					FileOutputStream fos = new FileOutputStream("src//main//resources//imgs//piste.jpg");
-					fos.write(pirow.getImage());
-					fos.close();
-					ImageIcon imgThisImg1 = new ImageIcon("src//main//resources//imgs//piste.jpg");
-					Image image = imgThisImg1.getImage(); // transform it
-					Image newimg = image.getScaledInstance(150, 130, java.awt.Image.SCALE_SMOOTH); // scale
-																									// it
-																									// the
-																									// smooth
-																									// way
-					ImageIcon imgThisImg = new ImageIcon(newimg); // transform
-																	// it back
-					i_pi_image.setIcon(imgThisImg);
-					imgThisImg.getImage().flush();
-
-					// modify table
-					if (pirow.getType().equals("Training"))
-						i_pi_typecombo.setSelectedIndex(0);
-					if (pirow.getType().equals("Daily Activities"))
-						i_pi_typecombo.setSelectedIndex(1);
-
-					i_pi_description.setText(pirow.getDescription());
-					i_pi_name.setText(pirow.getName());
-
-					// end modif
-
-				} catch (Exception e3) {
-					e3.printStackTrace();
-
-				}
-
-			}
-
-		});
-
-		i_pi_scrollPane.setViewportView(i_pi_table);
-
 		JButton i_pi_edit = new JButton("Edit");
+		
+		i_pi_edit.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
+		i_pi_edit.setBounds(263, 373, 89, 23);
+		panel_i_piste.add(i_pi_edit);
+		
+		i_pi_scrollPane.setViewportView(i_pi_table);
+		UpdateEvent.setBounds(10, 270, 111, 30);
+		AllEventspanel.add(UpdateEvent);
+		JLabel EventPictureShow = new JLabel("");
+		EventPictureShow.setBounds(469, 206, 227, 105);
+		AllEventspanel.add(EventPictureShow);
+		
 		i_pi_edit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -1477,9 +1257,7 @@ public class HomeManager {
 			}
 
 		});
-		i_pi_edit.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		i_pi_edit.setBounds(183, 288, 89, 23);
-		panel_i_piste.add(i_pi_edit);
+	
 
 		JButton i_pi_remove = new JButton("Remove");
 		i_pi_remove.addActionListener(new ActionListener() {
@@ -1511,22 +1289,26 @@ public class HomeManager {
 
 		});
 		i_pi_remove.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		i_pi_remove.setBounds(321, 288, 89, 23);
+		i_pi_remove.setBounds(401, 373, 89, 23);
 		panel_i_piste.add(i_pi_remove);
 
 		JLabel i_pilabel_res = new JLabel("Resort :");
 		i_pilabel_res.setFont(new Font("Source Sans Pro", Font.PLAIN, 16));
-		i_pilabel_res.setBounds(10, 234, 99, 25);
+		i_pilabel_res.setBounds(92, 304, 99, 25);
 		panel_i_piste.add(i_pilabel_res);
 
-		JLabel i_pi_backg = new JLabel("New label");
+		JLabel i_pi_backg = new JLabel("");
 		i_pi_backg.setIcon(new ImageIcon(
 				"C:\\Users\\Iheb\\Desktop\\Ski Freestyle Wallpaper High Definition 61942 5975 Wallpaper  Cool ....jpg"));
 		i_pi_backg.setBounds(0, 0, 763, 316);
 		panel_i_piste.add(i_pi_backg);
+		
+		JLabel i3_background = new JLabel("");
+		i3_background.setIcon(new ImageIcon("src\\main\\resources\\wallpaper skiworld.jpg"));
+		i3_background.setBounds(0, 0, 870, 555);
+		panel_i_piste.add(i3_background);
 
-		JPanel panel = new JPanel();
-		panel.setLayout(null);
+		
 		tabbedPane.addTab("ALL TRAININGS", null, panel, null);
 
 		TrainingNameShow = new JTextField();
@@ -1547,8 +1329,8 @@ public class HomeManager {
 		JTextArea TrainingDescriptionShow = new JTextArea();
 		TrainingDescriptionShow.setBounds(473, 78, 244, 70);
 		panel.add(TrainingDescriptionShow);
-
-		TrainingTable = new JTable();
+		EventTable.setModel(pubicationModel.getEventModel());
+		
 		TrainingTable.setFont(new Font("Arial", Font.BOLD, 12));
 		TrainingTable.setBorder(new LineBorder(new Color(0, 0, 0)));
 		TrainingTable.setBounds(10, 49, 399, 198);
@@ -1571,7 +1353,7 @@ public class HomeManager {
 					if (reply == JOptionPane.YES_OPTION) {
 
 						try {
-							
+
 							Training training = new Training();
 							training = TrainingBusiness.findTrainingByID(RowSelectedTraining.getIdTraining());
 							String nameUpdate = TrainingNameShow.getText();
@@ -1641,11 +1423,11 @@ public class HomeManager {
 					if (reply == JOptionPane.YES_OPTION) {
 
 						try {
-							
+
 							Training training = new Training();
 							training = TrainingBusiness.findTrainingByID(RowSelectedTraining.getIdTraining());
 							TrainingBusiness.deleteTraining(training);
-							
+
 							TrainingTable.setModel(trainingModel.getTrainingModel());
 
 						} catch (NamingException e2) {
@@ -1679,7 +1461,7 @@ public class HomeManager {
 		Filter_Trainings.setBounds(88, 18, 240, 20);
 		panel.add(Filter_Trainings);
 
-		JButton TrainingShare = new JButton("Share on Facebook");
+		
 		TrainingShare.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String nameToShare = TrainingNameShow.getText();
@@ -1705,530 +1487,26 @@ public class HomeManager {
 
 			}
 		});
-		TrainingShare.setBounds(536, 272, 135, 27);
-		panel.add(TrainingShare);
-
-		JPanel Eventspanel = new JPanel();
-		tabbedPane.addTab("EVENTS", null, Eventspanel, null);
-		Eventspanel.setLayout(null);
-
-		EventName = new JTextField();
-		EventName.setBounds(198, 23, 244, 35);
-		Eventspanel.add(EventName);
-		EventName.setColumns(10);
-
-		JTextPane txtpnEventName = new JTextPane();
-		txtpnEventName.setFont(new Font("Source Sans Pro", Font.ITALIC, 18));
-		txtpnEventName.setText("EVENT NAME");
-		txtpnEventName.setBounds(58, 23, 111, 25);
-		Eventspanel.add(txtpnEventName);
-
-		JTextArea EventDescription = new JTextArea();
-		EventDescription.setBounds(198, 69, 244, 70);
-		Eventspanel.add(EventDescription);
-
-		JTextPane txtpnDescription = new JTextPane();
-		txtpnDescription.setText("DESCRIPTION");
-		txtpnDescription.setFont(new Font("Source Sans Pro", Font.ITALIC, 18));
-		txtpnDescription.setBounds(58, 69, 111, 25);
-		Eventspanel.add(txtpnDescription);
-
-		JTextPane txtpnStartingDate = new JTextPane();
-		txtpnStartingDate.setText("STARTING DATE");
-		txtpnStartingDate.setFont(new Font("Source Sans Pro", Font.ITALIC, 18));
-		txtpnStartingDate.setBounds(58, 150, 121, 25);
-		Eventspanel.add(txtpnStartingDate);
-
-		JDateChooser dateStart = new JDateChooser();
-		dateStart.setDateFormatString("yyyy-MM-dd");
-		dateStart.setBounds(220, 150, 200, 25);
-		Eventspanel.add(dateStart);
-
-		JTextPane txtpnEndingDate = new JTextPane();
-		txtpnEndingDate.setText("ENDING DATE");
-		txtpnEndingDate.setFont(new Font("Source Sans Pro", Font.ITALIC, 18));
-		txtpnEndingDate.setBounds(58, 197, 121, 25);
-		Eventspanel.add(txtpnEndingDate);
-
-		JDateChooser dateEnd = new JDateChooser();
-		dateEnd.setDateFormatString("yyyy-MM-dd");
-		dateEnd.setBounds(220, 197, 200, 25);
-		Eventspanel.add(dateEnd);
-
-		JComboBox EventType = new JComboBox();
-		EventType.setModel(
-				new DefaultComboBoxModel(new String[] { "FAMILY", "EXTREME SPORTS", "NIGHT PARTY", "SKI CHALLENGE" }));
-		EventType.setBounds(220, 233, 200, 20);
-		Eventspanel.add(EventType);
-
-		JTextPane txtpnType = new JTextPane();
-		txtpnType.setText("TYPE");
-		txtpnType.setFont(new Font("Source Sans Pro", Font.ITALIC, 18));
-		txtpnType.setBounds(85, 233, 51, 25);
-		Eventspanel.add(txtpnType);
-
-		JComboBox EventResort = new JComboBox();
-		EventResort.setBounds(584, 71, 142, 20);
-		Eventspanel.add(EventResort);
-
-		JPanel AllEventspanel = new JPanel();
-		tabbedPane.addTab("All EVENTS", null, AllEventspanel, null);
-		AllEventspanel.setLayout(null);
-		EventNameShow = new JTextField();
-		EventNameShow.setBounds(452, 14, 244, 30);
-		AllEventspanel.add(EventNameShow);
-		EventNameShow.setColumns(10);
-
-		JDateChooser StartingDateShow = new JDateChooser();
-		StartingDateShow.setDateFormatString("yyyy-MM-dd");
-		StartingDateShow.setBounds(434, 170, 135, 25);
-		AllEventspanel.add(StartingDateShow);
-
-		JDateChooser EndingDateShow = new JDateChooser();
-		EndingDateShow.setDateFormatString("yyyy-MM-dd");
-		EndingDateShow.setBounds(590, 170, 149, 25);
-		AllEventspanel.add(EndingDateShow);
-
-		JTextArea EventDescriptionShow = new JTextArea();
-		EventDescriptionShow.setBounds(452, 77, 244, 70);
-		AllEventspanel.add(EventDescriptionShow);
-		trainingModel.fillTrainingResortComboBox(TrainingResort);
-		JButton AddTraining = new JButton("ADD TRAINING");
-		AddTraining.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-			
-				try {
-					
-					Training training = new Training();				
-					Resort resort = new Resort();
-					resort = ResortBusinessDelegate.findResortByLabel(TrainingResort.getSelectedItem().toString());
-					training.setDescription(TrainingDescription.getText());
-					training.setName(TrainingName.getText());
-					training.setType(TrainingType.getSelectedItem().toString());
-					training.setResort(resort);
-					/**** jCALENDAR */
-					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-					Date parsedT = new Date();
-					SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
-					Date parsedT2 = new Date();
-					try {
-
-						parsedT = format.parse(((JTextField) dateStart.getDateEditor().getUiComponent()).getText());
-						parsedT2 = format2.parse(((JTextField) dateEnd.getDateEditor().getUiComponent()).getText());
-
-					} catch (ParseException ex) {
-						ex.printStackTrace();
-					}
-					java.sql.Date sql = new java.sql.Date(parsedT.getTime());
-					java.sql.Date sql2 = new java.sql.Date(parsedT2.getTime());
-
-					training.setStartDate(sql);
-					training.setEndDate(sql2);
-
-					TrainingBusiness.addTraining(training);
-
-					TrainingTable.setModel(trainingModel.getTrainingModel());
-
-				} catch (NamingException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-
-			}
-		});
-		AddTraining.setBounds(253, 265, 131, 23);
-		Trainingpanel.add(AddTraining);
-
-		// pubicationModel.fillEventResortComboBox
-		pubicationModel.fillEventResortComboBox(EventResort);
-		EventTable = new JTable();
-
-		JButton EventAddPicture = new JButton("ADD PICTURE");
-		EventAddPicture.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				JFileChooser ch = new JFileChooser();
-				ch.showOpenDialog(null);
-				File f = ch.getSelectedFile();
-				EventImage = f.getAbsolutePath();
-
-				EventPicturePath.setText(EventImage);
-
-			}
-		});
-		EventAddPicture.setBounds(463, 29, 104, 23);
-		Eventspanel.add(EventAddPicture);
-
-		EventPicturePath = new JTextField();
-		EventPicturePath.setBounds(584, 30, 142, 20);
-		Eventspanel.add(EventPicturePath);
-		EventPicturePath.setColumns(10);
-
-		JButton btnAddEvent = new JButton("ADD EVENT");
-		btnAddEvent.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				
-		panel.setBounds(710, 14, 1, 1);
-		panel.setLayout(null);
-		StoreClothes.add(panel);
-
-		JLabel label = new JLabel("Name :");
-		label.setBounds(31, 14, 46, 14);
-		panel.add(label);
-
-		JLabel label_1 = new JLabel("Description :");
-		label_1.setBounds(31, 57, 70, 14);
-		panel.add(label_1);
-
-		JLabel label_2 = new JLabel("Price :");
-		label_2.setBounds(31, 109, 46, 14);
-		panel.add(label_2);
-
-		JLabel label_3 = new JLabel("Deal :");
-		label_3.setBounds(31, 167, 46, 14);
-		panel.add(label_3);
-
-		JLabel label_4 = new JLabel("Type :");
-		label_4.setBounds(31, 220, 46, 14);
-		panel.add(label_4);
-
-		textField_5 = new JTextField();
-		textField_5.setColumns(10);
-		textField_5.setBounds(135, 11, 155, 20);
-		panel.add(textField_5);
-
-		textField_6 = new JTextField();
-		textField_6.setColumns(10);
-		textField_6.setBounds(135, 54, 155, 20);
-		panel.add(textField_6);
-
-		textField_7 = new JTextField();
-		textField_7.setColumns(10);
-		textField_7.setBounds(135, 106, 155, 20);
-		panel.add(textField_7);
-
-		textField_8 = new JTextField();
-		textField_8.setColumns(10);
-		textField_8.setBounds(135, 164, 155, 20);
-		panel.add(textField_8);
-
-		textField_9 = new JTextField();
-		textField_9.setColumns(10);
-		textField_9.setBounds(135, 217, 155, 20);
-		panel.add(textField_9);
-
-		JButton button = new JButton("Add");
-		button.setBounds(167, 249, 89, 23);
-		panel.add(button);
-		JComboBox cbxStoreClth = new JComboBox();
-		cbxStoreClth.setBounds(136, 246, 158, 20);
-		StoreClothes.add(cbxStoreClth);
-		try {
-			clotheModel.fillStoreComboBox(cbxStoreClth);
-		} catch (NamingException | SQLException | IOException e3) {
-			// TODO Auto-generated catch block
-			e3.printStackTrace();
-		}
-		JButton btnAddClothFK = new JButton("Add");
-		btnAddClothFK.setBounds(363, 419, 89, 23);
-		btnAddClothFK.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				boolean isFull = true;
-				if (txtNameClth.getText().trim().length() == 0) {
-					isFull = false;
-					RequiredFieldNameClth.setVisible(true);
-				} else {
-					RequiredFieldNameClth.setVisible(false);
-				}
-
-				if (txtDescClth.getText().trim().length() == 0) {
-					isFull = false;
-					RequiredFieldDescClth.setVisible(true);
-				} else {
-					RequiredFieldDescClth.setVisible(false);
-				}
-
-				if (txtPriceClth.getText().trim().length() == 0) {
-					isFull = false;
-					RequiredFieldPriceClth.setVisible(true);
-				} else {
-					RequiredFieldPriceClth.setVisible(false);
-				}
-
-				if (txtTypeClth.getText().trim().length() == 0) {
-					isFull = false;
-					RequiredFieldTypeClth.setVisible(true);
-				} else {
-					RequiredFieldTypeClth.setVisible(false);
-				}
-
-				if (txtDealClth.getText().trim().length() == 0) {
-					isFull = false;
-					RequiredFieldDealClth.setVisible(true);
-				} else {
-					RequiredFieldDealClth.setVisible(false);
-				}
-				if (isFull == true){
-					try {
-						ClotheModel clotheModel;
-						
-						Clothes Clothe = new Clothes();
-						Clothe.setName(txtNameClth.getText());
-						Clothe.setDescription(txtDescClth.getText());
-						Clothe.setPrice(Float.parseFloat(txtPriceClth.getText()));
-						Clothe.setDeal(Float.parseFloat(txtDealClth.getText()));
-						Clothe.setType(txtTypeClth.getText());
-						File file = new File(pathImgClth);
-						byte[] bFile = new byte[(int) file.length()];
-
-						try {
-							FileInputStream fileInputStream = new FileInputStream(file);
-							fileInputStream.read(bFile);
-							fileInputStream.close();
-						} catch (Exception e1) {
-							e1.printStackTrace();
-						}
-						Clothe.setImage(bFile);
-						Clothe.setStore(StoreBusinessDelegate.findAllStores().get(cbxStoreClth.getSelectedIndex()));
-						clotheModel = new ClotheModel();
-						ClothBusiness.addClothe(Clothe);
-						tableClth.setModel(clotheModel.getClothesModel());
-						txtNameClth.setText("");
-						txtDescClth.setText("");
-						txtPriceClth.setText("");
-						txtDealClth.setText("");
-						txtTypeClth.setText("");
-						RequiredFieldNameClth.setVisible(false);
-						RequiredFieldDescClth.setVisible(false);
-						RequiredFieldPriceClth.setVisible(false);
-						RequiredFieldTypeClth.setVisible(false);
-						RequiredFieldDealClth.setVisible(false);
-					} catch (NamingException e2) {
-						// TODO Auto-generated catch block
-						e2.printStackTrace();
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				}else {
-					JDialog dialog = new JDialog();
-					dialog.setAlwaysOnTop(true);
-					JOptionPane.showMessageDialog(dialog, "Please enter the required fields");
-
-				}
-
-				
-
-			}
-		});
-		StoreClothes.add(btnAddClothFK);
-
-		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(363, 14, 497, 394);
-		StoreClothes.add(scrollPane_1);
-		JLabel lblImgClth = new JLabel("");
-		lblImgClth.setBounds(89, 293, 205, 88);
-		StoreClothes.add(lblImgClth);
-		tableClth = new JTable();
-		tableClth.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				int index = tableClth.getSelectedRow();
-				ClotheModel clotheModel;
-				try {
-					clotheModel = new ClotheModel();
-					rowClothes = clotheModel.getClotheList().get(index);
-				} catch (NamingException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				FileOutputStream fos;
-				try {
-					fos = new FileOutputStream("src//main//resources//imgs//clth.jpg");
-					fos.write(rowClothes.getImage());
-					fos.close();
-				} catch (FileNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-
-				ImageIcon imgThisImg1 = new ImageIcon("src//main//resources//imgs//clth.jpg");
-				Image image = imgThisImg1.getImage(); // transform it
-				Image newimg = image.getScaledInstance(150, 130, java.awt.Image.SCALE_SMOOTH); // scale
-																								// it
-																								// the
-																								// smooth
-																								// way
-				ImageIcon imgThisImg = new ImageIcon(newimg); // transform
-																// it back
-				lblImgClth.setIcon(imgThisImg);
-				imgThisImg.getImage().flush();
-				txtNameClth.setText(rowClothes.getName());
-				txtDescClth.setText(rowClothes.getDescription());
-				txtPriceClth.setText((Float.toString(rowClothes.getPrice())));
-				txtDealClth.setText((Float.toString(rowClothes.getDeal())));
-				txtTypeClth.setText(rowClothes.getType());
-				RequiredFieldNameClth.setVisible(false);
-				RequiredFieldDescClth.setVisible(false);
-				RequiredFieldPriceClth.setVisible(false);
-				RequiredFieldTypeClth.setVisible(false);
-				RequiredFieldDealClth.setVisible(false);
-			}
-		});
-		scrollPane_1.setViewportView(tableClth);
-
-		JLabel lblStore = new JLabel("Store");
-		lblStore.setBounds(36, 249, 46, 14);
-		StoreClothes.add(lblStore);
-
-		JButton btnEdit_Clothe = new JButton("Edit");
-		btnEdit_Clothe.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				boolean isFull = true;
-				if (txtNameClth.getText().trim().length() == 0) {
-					isFull = false;
-					RequiredFieldNameClth.setVisible(true);
-				} else {
-					RequiredFieldNameClth.setVisible(false);
-				}
-
-				if (txtDescClth.getText().trim().length() == 0) {
-					isFull = false;
-					RequiredFieldDescClth.setVisible(true);
-				} else {
-					RequiredFieldDescClth.setVisible(false);
-				}
-
-				if (txtPriceClth.getText().trim().length() == 0) {
-					isFull = false;
-					RequiredFieldPriceClth.setVisible(true);
-				} else {
-					RequiredFieldPriceClth.setVisible(false);
-				}
-
-				if (txtTypeClth.getText().trim().length() == 0) {
-					isFull = false;
-					RequiredFieldTypeClth.setVisible(true);
-				} else {
-					RequiredFieldTypeClth.setVisible(false);
-				}
-
-				if (txtDealClth.getText().trim().length() == 0) {
-					isFull = false;
-					RequiredFieldDealClth.setVisible(true);
-				} else {
-					RequiredFieldDealClth.setVisible(false);
-				}
-				int index = tableClth.getSelectedRow();
-				if (rowClothes != null) {
-					ClotheModel clotheModel;
-					
-					Clothes clothes = new Clothes();
-					clothes.setIdClothes(rowClothes.getIdClothes());
-					clothes.setName(txtNameClth.getText());
-					clothes.setDescription(txtDescClth.getText());
-					clothes.setPrice(Float.parseFloat(txtPriceClth.getText()));
-					clothes.setDeal(Float.parseFloat(txtDealClth.getText()));
-					clothes.setType(txtTypeClth.getText());
-					 if (isFull == true){
-							try {
-								clothes.setStore(
-								StoreBusinessDelegate.findAllStores().get(cbxStoreClth.getSelectedIndex()));
-								clotheModel = new ClotheModel();
-								ClothBusiness.updateClothe(clothes);
-								tableClth.setModel(clotheModel.getClothesModel());
-								JDialog dialog = new JDialog();
-								dialog.setAlwaysOnTop(true);
-								JOptionPane.showMessageDialog(dialog, "Edit successfully!");
-								txtNameClth.setText("");
-								txtDescClth.setText("");
-								txtPriceClth.setText("");
-								txtDealClth.setText("");
-								txtTypeClth.setText("");
-								RequiredFieldNameClth.setVisible(false);
-								RequiredFieldDescClth.setVisible(false);
-								RequiredFieldPriceClth.setVisible(false);
-								RequiredFieldTypeClth.setVisible(false);
-								RequiredFieldDealClth.setVisible(false);
-							} catch (NamingException e2) {
-								// TODO Auto-generated catch block
-								e2.printStackTrace();
-							} catch (SQLException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							} catch (IOException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-					 }
-
-				} else {
-					JOptionPane.showMessageDialog(null, "Please select a clothe to modify");
-				}
-			}
-		});
+		
 		btnEdit_Clothe.setBounds(496, 419, 89, 23);
 		StoreClothes.add(btnEdit_Clothe);
-
-		JButton btnDelete_Clothe = new JButton("Delete");
-		btnDelete_Clothe.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				int index = tableClth.getSelectedRow();
-				if (rowClothes != null) {
-
-				
-					try {
-					
-						ClothBusiness.deleteClothe(rowClothes.getIdClothes());
-						tableClth.setModel(clotheModel.getClothesModel());
-						JDialog dialog = new JDialog();
-						dialog.setAlwaysOnTop(true);
-						JOptionPane.showMessageDialog(dialog, "Delete successfully!");
-						txtNameClth.setText("");
-						txtDescClth.setText("");
-						txtPriceClth.setText("");
-						txtDealClth.setText("");
-						txtTypeClth.setText("");
-					} catch (NamingException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				} else {
-					JOptionPane.showMessageDialog(null, "Please select a Clothe to remove");
-				}
-			}
-		});
-		btnDelete_Clothe.setBounds(627, 419, 89, 23);
-		StoreClothes.add(btnDelete_Clothe);
-
-		JButton btnImageClth = new JButton("image");
-		btnImageClth.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JFileChooser choix = new JFileChooser();
-				choix.showOpenDialog(null);
-				f = choix.getSelectedFile();
-				pathImgClth = f.getAbsolutePath();
-				ImageIcon image = new ImageIcon(pathImgClth);
-				Image im = image.getImage();
-				Image myImg = im.getScaledInstance(lblImgClth.getWidth(), lblImgClth.getHeight(), Image.SCALE_SMOOTH);
-				ImageIcon newImage = new ImageIcon(myImg);
-				lblImgClth.setIcon(newImage);
-			}
-		});
+		
 		btnImageClth.setBounds(136, 419, 89, 23);
 		StoreClothes.add(btnImageClth);
+		
+		
+		btnAddEvent.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+				try {
+					clotheModel.fillStoreComboBox(cbxStoreClth);
+				} catch (NamingException | SQLException | IOException e3) {
+					// TODO Auto-generated catch block
+					e3.printStackTrace();
+				}
+
+				
+				
 				try {
 					Event event = new Event();
 					Resort resort = new Resort();
@@ -2360,15 +1638,7 @@ public class HomeManager {
 			}
 
 		});
-		btnAddEvent.setBounds(572, 197, 89, 23);
-		Eventspanel.add(btnAddEvent);
-
-		EventTable.setBounds(10, 49, 399, 198);
-
-		EventTable.setFont(new Font("Arial", Font.BOLD, 12));
-		EventTable.setBorder(new LineBorder(new Color(0, 0, 0)));
-		AllEventspanel.add(EventTable);
-		JButton UpdateEvent = new JButton("UPDATE");
+		
 		UpdateEvent.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (RowSelectedEvent == null) {
@@ -2385,7 +1655,7 @@ public class HomeManager {
 					if (reply == JOptionPane.YES_OPTION) {
 
 						try {
-						
+
 							Event event = new Event();
 							event = EventBusiness.findEventByID(RowSelectedEvent.getIdEvent());
 							if (EventNameShow.getText().equals("")) {
@@ -2459,11 +1729,7 @@ public class HomeManager {
 
 			}
 		});
-		UpdateEvent.setBounds(10, 270, 111, 30);
-		AllEventspanel.add(UpdateEvent);
-		JLabel EventPictureShow = new JLabel("");
-		EventPictureShow.setBounds(469, 206, 227, 105);
-		AllEventspanel.add(EventPictureShow);
+		
 
 		EventTable.setModel(pubicationModel.getEventModel());
 
@@ -2503,7 +1769,7 @@ public class HomeManager {
 		});
 
 		TrainingTable.setModel(trainingModel.getTrainingModel());
-		
+
 		JButton btnNewButton = new JButton("CREATE PDF");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -2514,15 +1780,21 @@ public class HomeManager {
 					JOptionPane.showMessageDialog(dialog, "Select a training first");
 				} else {
 
-				String	TrainingNamePdf  =RowSelectedTraining.getName().toString();
-				String	TrainingDescriptionPdf  =RowSelectedTraining.getDescription().toString();
-				String	TrainingStartPdf  ="24-03-2017";
-				String	TrainingeEndPdf  ="25-03-2017";
+					String TrainingNamePdf = RowSelectedTraining.getName().toString();
+					String TrainingDescriptionPdf = RowSelectedTraining.getDescription().toString();
+					String TrainingStartPdf = "24-03-2017";
+					String TrainingeEndPdf = "25-03-2017";
 					CreatePdf(TrainingNamePdf, TrainingDescriptionPdf, TrainingStartPdf, TrainingeEndPdf);
+				}
 			}
-			}});
+		});
 		btnNewButton.setBounds(367, 274, 135, 23);
 		panel.add(btnNewButton);
+		
+		JLabel r4_backgroun = new JLabel("");
+		r4_backgroun.setIcon(new ImageIcon("src\\main\\resources\\wallpaper skiworld.jpg"));
+		r4_backgroun.setBounds(0, 0, 880, 555);
+		panel.add(r4_backgroun);
 
 		TrainingTable.addMouseListener(new MouseAdapter() {
 			@Override
@@ -2555,11 +1827,14 @@ public class HomeManager {
 					if (reply == JOptionPane.YES_OPTION) {
 
 						try {
-						
+
 							Event event = new Event();
 							event = EventBusiness.findEventByID(RowSelectedEvent.getIdEvent());
 							EventBusiness.deleteEvent(event);
 							EventTable.setModel(pubicationModel.getEventModel());
+							EventDescriptionShow.setText("");
+							EventNameShow.setText("");
+						
 
 						} catch (NamingException e) {
 							e.printStackTrace();
@@ -2620,19 +1895,28 @@ public class HomeManager {
 		});
 		EventShare.setBounds(252, 272, 135, 27);
 		AllEventspanel.add(EventShare);
-
-	
-
-	
+		
+		JLabel r3_background = new JLabel("");
+		r3_background.setIcon(new ImageIcon("src\\main\\resources\\wallpaper skiworld.jpg"));
+		r3_background.setBounds(0, 0, 880, 555);
+		AllEventspanel.add(r3_background);
 
 		i_imagepathClth = new JTextField();
 		i_imagepathClth.setBounds(36, 388, 258, 20);
 		StoreClothes.add(i_imagepathClth);
 		i_imagepathClth.setColumns(10);
-		
 
-		
+	
 
+		JLabel lblStore_1 = new JLabel("Store");
+		lblStore_1.setBounds(36, 249, 46, 14);
+		StoreClothes.add(lblStore_1);
+
+		scrollPane_1.setBounds(329, 14, 531, 373);
+		StoreClothes.add(scrollPane_1);
+
+		tableClth = new JTable();
+		scrollPane_1.setViewportView(tableClth);
 
 		JLabel lblName = new JLabel("Name *");
 		lblName.setBounds(31, 14, 46, 14);
@@ -2684,8 +1968,8 @@ public class HomeManager {
 		cbxStore.setBounds(135, 232, 155, 20);
 		StoreEquipments.add(cbxStore);
 		// EquipementModel equipementModel = new EquipementModel();
+		equipementModel.fillStoreComboBox(cbxStoreClth);
 		equipementModel.fillStoreComboBox(cbxStore);
-
 		JButton btnAddEqpFK = new JButton("Add");
 		btnAddEqpFK.setBounds(351, 419, 89, 23);
 		btnAddEqpFK.addActionListener(new ActionListener() {
@@ -2729,7 +2013,7 @@ public class HomeManager {
 				if (isFull == true) {
 					try {
 						EquipementModel equipementModel;
-					
+
 						Equipments Equipment = new Equipments();
 						Equipment.setName(txtName.getText());
 						Equipment.setDescription(txtDesc.getText());
@@ -2747,8 +2031,7 @@ public class HomeManager {
 							e1.printStackTrace();
 						}
 						Equipment.setImage(bFile);
-						Equipment.setStore(
-								StoreBusinessDelegate.findAllStores().get(cbxStore.getSelectedIndex()));
+						Equipment.setStore(StoreBusinessDelegate.findAllStores().get(cbxStore.getSelectedIndex()));
 						equipementModel = new EquipementModel();
 						EquipementBusiness.addEquipement(Equipment);
 						tableEqp.setModel(equipementModel.getEquipmentsModel());
@@ -2789,9 +2072,10 @@ public class HomeManager {
 		StoreEquipments.add(btnAddEqpFK);
 
 		JScrollPane scrollPaneEqp = new JScrollPane();
-		scrollPaneEqp.setBounds(351, 14, 509, 394);
+		scrollPaneEqp.setBounds(330, 11, 509, 331);
 		StoreEquipments.add(scrollPaneEqp);
 		JLabel lblImg = new JLabel("");
+		lblImg.setBounds(31, 263, 259, 106);
 		lblImg.setIcon((Icon) img_display);
 		tableEqp = new JTable();
 		tableEqp.addMouseListener(new MouseAdapter() {
@@ -2845,12 +2129,10 @@ public class HomeManager {
 			}
 		});
 		scrollPaneEqp.setViewportView(tableEqp);
-
-		// JLabel lblImg = new JLabel("");
-		lblImg.setBounds(31, 263, 259, 106);
 		StoreEquipments.add(lblImg);
 
 		JButton btnChooseImage = new JButton("Image");
+		btnChooseImage.setBounds(97, 419, 94, 23);
 		btnChooseImage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -2865,7 +2147,6 @@ public class HomeManager {
 				lblImg.setIcon(newImage);
 			}
 		});
-		btnChooseImage.setBounds(97, 419, 94, 23);
 		StoreEquipments.add(btnChooseImage);
 
 		JLabel lblNewLabel = new JLabel("Store");
@@ -2878,6 +2159,7 @@ public class HomeManager {
 		i_imagepathf.setColumns(10);
 
 		JButton btnEdit = new JButton("Edit");
+		btnEdit.setBounds(467, 419, 89, 23);
 		btnEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				boolean isFull = true;
@@ -2925,37 +2207,36 @@ public class HomeManager {
 					Equipment.setPrice(Float.parseFloat(txtPrice.getText()));
 					Equipment.setDeal(Float.parseFloat(txtDeal.getText()));
 					Equipment.setType(txtType.getText());
-					 if (isFull == true){
-							try {
-								Equipment.setStore(
-										StoreBusinessDelegate.findAllStores().get(cbxStore.getSelectedIndex()));
-								equipementModel = new EquipementModel();
-								EquipementBusiness.updateEquipement(Equipment);
-								tableEqp.setModel(equipementModel.getEquipmentsModel());
-								JDialog dialog = new JDialog();
-								dialog.setAlwaysOnTop(true);
-								JOptionPane.showMessageDialog(dialog, "Edit successfully!");
-								txtName.setText("");
-								txtDesc.setText("");
-								txtPrice.setText("");
-								txtDeal.setText("");
-								txtType.setText("");
-								RequiredFieldName.setVisible(false);
-								RequiredFieldDesc.setVisible(false);
-								RequiredFieldPrice.setVisible(false);
-								RequiredFieldType.setVisible(false);
-								RequiredFieldDeal.setVisible(false);
-							} catch (NamingException e2) {
-								// TODO Auto-generated catch block
-								e2.printStackTrace();
-							} catch (SQLException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							} catch (IOException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-					 }
+					if (isFull == true) {
+						try {
+							Equipment.setStore(StoreBusinessDelegate.findAllStores().get(cbxStore.getSelectedIndex()));
+							equipementModel = new EquipementModel();
+							EquipementBusiness.updateEquipement(Equipment);
+							tableEqp.setModel(equipementModel.getEquipmentsModel());
+							JDialog dialog = new JDialog();
+							dialog.setAlwaysOnTop(true);
+							JOptionPane.showMessageDialog(dialog, "Edit successfully!");
+							txtName.setText("");
+							txtDesc.setText("");
+							txtPrice.setText("");
+							txtDeal.setText("");
+							txtType.setText("");
+							RequiredFieldName.setVisible(false);
+							RequiredFieldDesc.setVisible(false);
+							RequiredFieldPrice.setVisible(false);
+							RequiredFieldType.setVisible(false);
+							RequiredFieldDeal.setVisible(false);
+						} catch (NamingException e2) {
+							// TODO Auto-generated catch block
+							e2.printStackTrace();
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
 
 				} else {
 					JOptionPane.showMessageDialog(null, "Please select an equipement to modify");
@@ -2963,10 +2244,10 @@ public class HomeManager {
 
 			}
 		});
-		btnEdit.setBounds(467, 419, 89, 23);
 		StoreEquipments.add(btnEdit);
 
 		JButton btnDelete = new JButton("Delete");
+		btnDelete.setBounds(583, 419, 89, 23);
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int index = tableEqp.getSelectedRow();
@@ -2999,8 +2280,12 @@ public class HomeManager {
 
 			}
 		});
-		btnDelete.setBounds(583, 419, 89, 23);
 		StoreEquipments.add(btnDelete);
+		
+		JLabel f1_background = new JLabel("New label");
+		f1_background.setIcon(new ImageIcon("src\\main\\resources\\wallpaper skiworld.jpg"));
+		f1_background.setBounds(0, 0, 870, 529);
+		StoreEquipments.add(f1_background);
 
 		JPanel Location = new JPanel();
 		tabbedPane.addTab("Location", null, Location, null);
@@ -3020,7 +2305,6 @@ public class HomeManager {
 		Location.setLayout(null);
 		Location.add(btnDisplayFK);
 
-		
 		scrollPaneMap = new JScrollPane();
 		scrollPaneMap.setBounds(409, 11, 456, 459);
 		Location.add(scrollPaneMap);
@@ -3110,6 +2394,11 @@ public class HomeManager {
 		JSlider_ME_Zoom.setMaximum(20);
 		JSlider_ME_Zoom.setBounds(143, 286, 188, 26);
 		Location.add(JSlider_ME_Zoom);
+		
+		JLabel f2_background = new JLabel("");
+		f2_background.setIcon(new ImageIcon("src\\main\\resources\\wallpaper skiworld.jpg"));
+		f2_background.setBounds(0, 0, 870, 555);
+		Location.add(f2_background);
 
 		JLabel i_label = new JLabel("");
 		i_label.setIcon(new ImageIcon(
@@ -3121,25 +2410,25 @@ public class HomeManager {
 		managerProfilePanel.setLayout(null);
 
 		JLabel h_lbl_status = new JLabel("You are");
-		h_lbl_status.setBounds(35, 35, 46, 22);
+		h_lbl_status.setBounds(94, 90, 46, 22);
 		managerProfilePanel.add(h_lbl_status);
 
 		managerProfilePanel.add(h_lbl_image);
 
 		JLabel lblFirstName = new JLabel("First name");
-		lblFirstName.setBounds(24, 78, 72, 14);
+		lblFirstName.setBounds(94, 133, 72, 14);
 		managerProfilePanel.add(lblFirstName);
 
 		JLabel lblLastName = new JLabel("Last name");
-		lblLastName.setBounds(24, 115, 57, 14);
+		lblLastName.setBounds(94, 170, 57, 14);
 		managerProfilePanel.add(lblLastName);
 
 		h_lbl_role = new JLabel("");
-		h_lbl_role.setBounds(109, 39, 72, 14);
+		h_lbl_role.setBounds(179, 94, 72, 14);
 		managerProfilePanel.add(h_lbl_role);
 
 		JLabel h_lbl_phone = new JLabel("Phone");
-		h_lbl_phone.setBounds(24, 269, 46, 14);
+		h_lbl_phone.setBounds(94, 324, 46, 14);
 		managerProfilePanel.add(h_lbl_phone);
 
 		h_tf_phone = new JTextField();
@@ -3153,7 +2442,7 @@ public class HomeManager {
 			}
 		});
 		h_tf_phone.setEnabled(false);
-		h_tf_phone.setBounds(105, 266, 86, 20);
+		h_tf_phone.setBounds(175, 321, 86, 20);
 		managerProfilePanel.add(h_tf_phone);
 		h_tf_phone.setColumns(10);
 
@@ -3168,7 +2457,7 @@ public class HomeManager {
 			}
 		});
 		h_tf_firstname.setEnabled(false);
-		h_tf_firstname.setBounds(105, 75, 86, 20);
+		h_tf_firstname.setBounds(175, 130, 86, 20);
 		managerProfilePanel.add(h_tf_firstname);
 		h_tf_firstname.setColumns(10);
 
@@ -3183,26 +2472,26 @@ public class HomeManager {
 			}
 		});
 		h_tf_lastname.setEnabled(false);
-		h_tf_lastname.setBounds(105, 112, 86, 20);
+		h_tf_lastname.setBounds(175, 167, 86, 20);
 		managerProfilePanel.add(h_tf_lastname);
 		h_tf_lastname.setColumns(10);
 
 		JLabel h_lblAddress = new JLabel("Address");
-		h_lblAddress.setBounds(24, 227, 46, 14);
+		h_lblAddress.setBounds(94, 282, 46, 14);
 		managerProfilePanel.add(h_lblAddress);
 
 		h_tf_address = new JTextField();
 		h_tf_address.setEnabled(false);
-		h_tf_address.setBounds(105, 224, 86, 20);
+		h_tf_address.setBounds(175, 279, 86, 20);
 		managerProfilePanel.add(h_tf_address);
 		h_tf_address.setColumns(10);
 
 		JLabel lblGender = new JLabel("gender");
-		lblGender.setBounds(24, 181, 46, 14);
+		lblGender.setBounds(94, 236, 46, 14);
 		managerProfilePanel.add(lblGender);
 
 		h_lbl_genderview = new JLabel("");
-		h_lbl_genderview.setBounds(105, 181, 86, 14);
+		h_lbl_genderview.setBounds(175, 236, 86, 14);
 		managerProfilePanel.add(h_lbl_genderview);
 
 		JButton btnNewButton1 = new JButton("Choose a photo");
@@ -3217,7 +2506,7 @@ public class HomeManager {
 
 			}
 		});
-		btnNewButton1.setBounds(561, 11, 109, 23);
+		btnNewButton1.setBounds(631, 66, 109, 23);
 		managerProfilePanel.add(btnNewButton1);
 
 		JButton btnNewButton_1 = new JButton("Apply photo");
@@ -3245,29 +2534,29 @@ public class HomeManager {
 
 			}
 		});
-		btnNewButton_1.setBounds(561, 39, 109, 23);
+		btnNewButton_1.setBounds(631, 94, 109, 23);
 		managerProfilePanel.add(btnNewButton_1);
 
 		JLabel h_lblEmail = new JLabel("Email");
-		h_lblEmail.setBounds(373, 118, 57, 14);
+		h_lblEmail.setBounds(443, 173, 57, 14);
 		managerProfilePanel.add(h_lblEmail);
 
 		h_tf_email = new JTextField();
 		h_tf_email.setEnabled(false);
-		h_tf_email.setBounds(452, 115, 134, 20);
+		h_tf_email.setBounds(522, 170, 134, 20);
 		managerProfilePanel.add(h_tf_email);
 		h_tf_email.setColumns(10);
 
 		JLabel lblChangePassword = new JLabel("Change Password");
-		lblChangePassword.setBounds(466, 181, 120, 14);
+		lblChangePassword.setBounds(536, 236, 120, 14);
 		managerProfilePanel.add(lblChangePassword);
 
 		JLabel h_lblNewPassword = new JLabel("New Password");
-		h_lblNewPassword.setBounds(354, 205, 86, 14);
+		h_lblNewPassword.setBounds(424, 260, 86, 14);
 		managerProfilePanel.add(h_lblNewPassword);
 
 		JLabel h_lblConfirmPassword = new JLabel("Confirm Password");
-		h_lblConfirmPassword.setBounds(354, 247, 88, 14);
+		h_lblConfirmPassword.setBounds(424, 302, 88, 14);
 		managerProfilePanel.add(h_lblConfirmPassword);
 
 		JButton btnUpdate = new JButton("Change my informations");
@@ -3397,21 +2686,26 @@ public class HomeManager {
 				}
 			}
 		});
-		btnUpdate.setBounds(272, 282, 185, 23);
+		btnUpdate.setBounds(310, 380, 185, 23);
 		managerProfilePanel.add(btnUpdate);
 
 		h_tf_password = new JPasswordField();
 		h_tf_password.setEnabled(false);
-		h_tf_password.setBounds(452, 202, 134, 20);
+		h_tf_password.setBounds(522, 257, 134, 20);
 		managerProfilePanel.add(h_tf_password);
 
 		h_tf_paswwordConfirm = new JPasswordField();
 		h_tf_paswwordConfirm.setEnabled(false);
-		h_tf_paswwordConfirm.setBounds(452, 244, 134, 20);
+		h_tf_paswwordConfirm.setBounds(522, 299, 134, 20);
 		managerProfilePanel.add(h_tf_paswwordConfirm);
+		
+		JLabel h_background = new JLabel("");
+		h_background.setIcon(new ImageIcon("src\\main\\resources\\wallpaper skiworld.jpg"));
+		h_background.setBounds(0, 0, 880, 555);
+		managerProfilePanel.add(h_background);
 
 		setTextFields();
-		i_label.setBounds(0, 0, 768, 420);
+		i_label.setBounds(0, 0, 832, 659);
 		ManagerGUI.getContentPane().add(i_label);
 
 		JLabel lblStoreName = new JLabel("Store name :");
@@ -3423,11 +2717,6 @@ public class HomeManager {
 		storeName.setColumns(10);
 		storeName.setBounds(139, 31, 149, 20);
 		Stores.add(storeName);
-
-		JLabel label_51 = new JLabel("");
-		label_51.setForeground(Color.RED);
-		label_51.setBounds(10, 24, 763, 316);
-		Stores.add(label_51);
 
 		JLabel lblPhoneStore = new JLabel("Phone");
 		lblPhoneStore.setBounds(10, 153, 89, 14);
@@ -3564,7 +2853,15 @@ public class HomeManager {
 		JLabel lblResort_Store = new JLabel("Resort");
 		lblResort_Store.setBounds(10, 204, 51, 14);
 		Stores.add(lblResort_Store);
-		Stores.setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{storeDescription, lblStoreName, storeName, lblStoreDesc, addStore, storeLocation, storeScroll, editStore, removeStore, lblStoreAdress, label_51}));
+		
+				JLabel t_background = new JLabel("");
+				t_background.setIcon(new ImageIcon("src\\main\\resources\\wallpaper skiworld.jpg"));
+				t_background.setForeground(Color.RED);
+				t_background.setBounds(0, 11, 813, 544);
+				Stores.add(t_background);
+				Stores.setFocusTraversalPolicy(
+						new FocusTraversalOnArray(new Component[] { storeDescription, lblStoreName, storeName, lblStoreDesc,
+								addStore, storeLocation, storeScroll, editStore, removeStore, lblStoreAdress, t_background }));
 		storeTable.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -3586,6 +2883,733 @@ public class HomeManager {
 				emailStore.setText(rowSelectedStore.getEmail());
 				addStore.setEnabled(false);
 			}
+		});
+		btnDelete_Clothe.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int index = tableClth.getSelectedRow();
+				if (rowClothes != null) {
+
+					try {
+
+						ClothBusiness.deleteClothe(rowClothes.getIdClothes());
+						tableClth.setModel(clotheModel.getClothesModel());
+						JDialog dialog = new JDialog();
+						dialog.setAlwaysOnTop(true);
+						JOptionPane.showMessageDialog(dialog, "Delete successfully!");
+						txtNameClth.setText("");
+						txtDescClth.setText("");
+						txtPriceClth.setText("");
+						txtDealClth.setText("");
+						txtTypeClth.setText("");
+					} catch (NamingException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				} else {
+					JOptionPane.showMessageDialog(null, "Please select a Clothe to remove");
+				}
+			}
+		});
+		btnDelete_Clothe.setBounds(627, 419, 89, 23);
+		StoreClothes.add(btnDelete_Clothe);
+		
+		JLabel f2_backgroun = new JLabel("New label");
+		f2_backgroun.setIcon(new ImageIcon("src\\main\\resources\\wallpaper skiworld.jpg"));
+		f2_backgroun.setBounds(0, 0, 870, 527);
+		StoreClothes.add(f2_backgroun);
+
+		
+		btnImageClth.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser choix = new JFileChooser();
+				choix.showOpenDialog(null);
+				f = choix.getSelectedFile();
+				pathImgClth = f.getAbsolutePath();
+				ImageIcon image = new ImageIcon(pathImgClth);
+				Image im = image.getImage();
+				Image myImg = im.getScaledInstance(lblImgClth.getWidth(), lblImgClth.getHeight(), Image.SCALE_SMOOTH);
+				ImageIcon newImage = new ImageIcon(myImg);
+				lblImgClth.setIcon(newImage);
+			}
+		});
+		i_remove.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				hotelrow = null;
+				int index = i_table_hotel.getSelectedRow();
+
+				if (index != -1) {
+
+					hotelrow = hotelmodel.hotellist.get(index);
+
+					try {
+						hotelDelegate.deleteHotel(hotelrow.getIdHotel());
+						SMS.main(null, "+21624056027",
+								"The hotel named " + hotelrow.getName().toUpperCase() + " was removed ! :)");
+
+						i_table_hotel.setModel(hotelmodel.hotelModel());
+					} catch (SQLException | IOException | NamingException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+				} else {
+					JOptionPane.showMessageDialog(null, "Please select a hotel to remove");
+				}
+
+			}
+		});
+		i_btnNewButton.addActionListener(new ActionListener() {
+			@SuppressWarnings("static-access")
+			public void actionPerformed(ActionEvent e) {
+
+				if (i_hotelname.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Please Fill the name space");
+					return;
+				}
+				if (i_hoteldescription.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Please Fill the Description space");
+					return;
+				}
+				if (i_imagepath.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Please select a photo");
+					return;
+				}
+
+				for (int i = 0; i < hotelmodel.getAll().size(); i++) {
+
+					if (i_hotelname.getText().equals(hotelmodel.getAll().get(i).getName())) {
+						JOptionPane.showMessageDialog(null, "a Hotel with that name already exists");
+						return;
+
+					}
+
+				}
+
+				Hotel hotel = new Hotel();
+				hotel.setDescription(i_hoteldescription.getText());
+				hotel.setName(i_hotelname.getText());
+				hotel.setCapacity((Integer) i_hotelcapacity.getValue());
+				hotel.setResort(ResortBusinessDelegate.findResortByLabel(i_hotel_combo.getSelectedItem().toString()));
+
+				File file = new File(image);
+				byte[] bFile = new byte[(int) file.length()];
+
+				try {
+					FileInputStream fileInputStream = new FileInputStream(file);
+					fileInputStream.read(bFile);
+					fileInputStream.close();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+				hotel.setImage(bFile);
+
+				try {
+
+					hotelDelegate.addHotel(hotel);
+
+					i_table_hotel.setModel(hotelmodel.hotelModel());
+				} catch (SQLException | IOException | NamingException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+		});
+		btnAddClothFK.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				boolean isFull = true;
+				if (txtNameClth.getText().trim().length() == 0) {
+					isFull = false;
+					RequiredFieldNameClth.setVisible(true);
+				} else {
+					RequiredFieldNameClth.setVisible(false);
+				}
+
+				if (txtDescClth.getText().trim().length() == 0) {
+					isFull = false;
+					RequiredFieldDescClth.setVisible(true);
+				} else {
+					RequiredFieldDescClth.setVisible(false);
+				}
+
+				if (txtPriceClth.getText().trim().length() == 0) {
+					isFull = false;
+					RequiredFieldPriceClth.setVisible(true);
+				} else {
+					RequiredFieldPriceClth.setVisible(false);
+				}
+
+				if (txtTypeClth.getText().trim().length() == 0) {
+					isFull = false;
+					RequiredFieldTypeClth.setVisible(true);
+				} else {
+					RequiredFieldTypeClth.setVisible(false);
+				}
+
+				if (txtDealClth.getText().trim().length() == 0) {
+					isFull = false;
+					RequiredFieldDealClth.setVisible(true);
+				} else {
+					RequiredFieldDealClth.setVisible(false);
+				}
+				if (isFull == true) {
+					try {
+						ClotheModel clotheModel;
+
+						Clothes Clothe = new Clothes();
+						Clothe.setName(txtNameClth.getText());
+						Clothe.setDescription(txtDescClth.getText());
+						Clothe.setPrice(Float.parseFloat(txtPriceClth.getText()));
+						Clothe.setDeal(Float.parseFloat(txtDealClth.getText()));
+						Clothe.setType(txtTypeClth.getText());
+						File file = new File(pathImgClth);
+						byte[] bFile = new byte[(int) file.length()];
+
+						try {
+							FileInputStream fileInputStream = new FileInputStream(file);
+							fileInputStream.read(bFile);
+							fileInputStream.close();
+						} catch (Exception e1) {
+							e1.printStackTrace();
+						}
+						Clothe.setImage(bFile);
+						Clothe.setStore(StoreBusinessDelegate.findAllStores().get(cbxStoreClth.getSelectedIndex()));
+						clotheModel = new ClotheModel();
+						ClothBusiness.addClothe(Clothe);
+						tableClth.setModel(clotheModel.getClothesModel());
+						txtNameClth.setText("");
+						txtDescClth.setText("");
+						txtPriceClth.setText("");
+						txtDealClth.setText("");
+						txtTypeClth.setText("");
+						RequiredFieldNameClth.setVisible(false);
+						RequiredFieldDescClth.setVisible(false);
+						RequiredFieldPriceClth.setVisible(false);
+						RequiredFieldTypeClth.setVisible(false);
+						RequiredFieldDealClth.setVisible(false);
+					} catch (NamingException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				} else {
+					JDialog dialog = new JDialog();
+					dialog.setAlwaysOnTop(true);
+					JOptionPane.showMessageDialog(dialog, "Please enter the required fields");
+
+				}
+
+			}
+		});
+		btnEdit_Clothe.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				boolean isFull = true;
+				if (txtNameClth.getText().trim().length() == 0) {
+					isFull = false;
+					RequiredFieldNameClth.setVisible(true);
+				} else {
+					RequiredFieldNameClth.setVisible(false);
+				}
+
+				if (txtDescClth.getText().trim().length() == 0) {
+					isFull = false;
+					RequiredFieldDescClth.setVisible(true);
+				} else {
+					RequiredFieldDescClth.setVisible(false);
+				}
+
+				if (txtPriceClth.getText().trim().length() == 0) {
+					isFull = false;
+					RequiredFieldPriceClth.setVisible(true);
+				} else {
+					RequiredFieldPriceClth.setVisible(false);
+				}
+
+				if (txtTypeClth.getText().trim().length() == 0) {
+					isFull = false;
+					RequiredFieldTypeClth.setVisible(true);
+				} else {
+					RequiredFieldTypeClth.setVisible(false);
+				}
+
+				if (txtDealClth.getText().trim().length() == 0) {
+					isFull = false;
+					RequiredFieldDealClth.setVisible(true);
+				} else {
+					RequiredFieldDealClth.setVisible(false);
+				}
+				int index = tableClth.getSelectedRow();
+				if (rowClothes != null) {
+					ClotheModel clotheModel;
+
+					Clothes clothes = new Clothes();
+					clothes.setIdClothes(rowClothes.getIdClothes());
+					clothes.setName(txtNameClth.getText());
+					clothes.setDescription(txtDescClth.getText());
+					clothes.setPrice(Float.parseFloat(txtPriceClth.getText()));
+					clothes.setDeal(Float.parseFloat(txtDealClth.getText()));
+					clothes.setType(txtTypeClth.getText());
+					if (isFull == true) {
+						try {
+							clothes.setStore(
+									StoreBusinessDelegate.findAllStores().get(cbxStoreClth.getSelectedIndex()));
+							clotheModel = new ClotheModel();
+							ClothBusiness.updateClothe(clothes);
+							tableClth.setModel(clotheModel.getClothesModel());
+							JDialog dialog = new JDialog();
+							dialog.setAlwaysOnTop(true);
+							JOptionPane.showMessageDialog(dialog, "Edit successfully!");
+							txtNameClth.setText("");
+							txtDescClth.setText("");
+							txtPriceClth.setText("");
+							txtDealClth.setText("");
+							txtTypeClth.setText("");
+							RequiredFieldNameClth.setVisible(false);
+							RequiredFieldDescClth.setVisible(false);
+							RequiredFieldPriceClth.setVisible(false);
+							RequiredFieldTypeClth.setVisible(false);
+							RequiredFieldDealClth.setVisible(false);
+						} catch (NamingException e2) {
+							// TODO Auto-generated catch block
+							e2.printStackTrace();
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+
+				} else {
+					JOptionPane.showMessageDialog(null, "Please select a clothe to modify");
+				}
+			}
+		});
+		i_tr_add.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				if (i_tr_descriptiont.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Please Fill the description space space");
+					return;
+				}
+				if (i_tr_path.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Please select a photo");
+					return;
+				}
+				if (i_tr_price.getValue().equals("")) {
+					JOptionPane.showMessageDialog(null, "Please select a photo");
+					return;
+				}
+
+				Transport transport = new Transport();
+				transport.setType(i_tr_type_combo.getSelectedItem().toString());
+
+				transport.setDescription(i_tr_descriptiont.getText());
+				transport.setBookingPrice((float) i_tr_price.getValue());
+				transport.setCapacity((Integer) i_tr_cap.getValue());
+				transport.setResort(
+						ResortBusinessDelegate.findResortByLabel(i_tr_resort_combo.getSelectedItem().toString()));
+
+				File file = new File(image);
+				byte[] bFile = new byte[(int) file.length()];
+
+				try {
+					FileInputStream fileInputStream = new FileInputStream(file);
+					fileInputStream.read(bFile);
+					fileInputStream.close();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+				transport.setImage(bFile);
+
+				try {
+					transportDelegate.addTransport(transport);
+					i_tr_table.setModel(transportmodel.transportModel());
+
+				} catch (SQLException | IOException | NamingException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+
+				}
+
+			}
+		});
+		i_pi_chooseimage.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				JFileChooser ch = new JFileChooser();
+				ch.showOpenDialog(null);
+				File f = ch.getSelectedFile();
+				if (f != null) {
+					image = f.getAbsolutePath();
+
+					i_pi_path.setText(image);
+				}
+
+				else {
+
+					image = "src//main//resources//imgs//defaultpiste.jpg";
+					i_pi_path.setText(image);
+				}
+
+				i_pi_path.setText(image);
+
+			}
+		});
+		AddTraining.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				try {
+
+					Training training = new Training();
+					Resort resort = new Resort();
+					resort = ResortBusinessDelegate
+							.findResortByLabel(TrainingResort.getSelectedItem().toString());
+					training.setDescription(TrainingDescription.getText());
+					training.setName(TrainingName.getText());
+					training.setType(TrainingType.getSelectedItem().toString());
+					training.setResort(resort);
+					/**** jCALENDAR */
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+					Date parsedT = new Date();
+					SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
+					Date parsedT2 = new Date();
+					try {
+
+						parsedT = format
+								.parse(((JTextField) dateStart.getDateEditor().getUiComponent()).getText());
+						parsedT2 = format2
+								.parse(((JTextField) dateEnd.getDateEditor().getUiComponent()).getText());
+
+					} catch (ParseException ex) {
+						ex.printStackTrace();
+					}
+					java.sql.Date sql = new java.sql.Date(parsedT.getTime());
+					java.sql.Date sql2 = new java.sql.Date(parsedT2.getTime());
+
+					training.setStartDate(sql);
+					training.setEndDate(sql2);
+
+					TrainingBusiness.addTraining(training);
+
+					TrainingTable.setModel(trainingModel.getTrainingModel());
+
+				} catch (NamingException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+		});
+		i_edit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				hotelrow = null;
+				int index = i_table_hotel.getSelectedRow();
+
+				if (index != -1) {
+
+					hotelrow = hotelmodel.hotellist.get(index);
+
+					if (i_hotelname.getText().equals("")) {
+						JOptionPane.showMessageDialog(null, "Please Fill the name space");
+						return;
+					}
+					if (i_hoteldescription.getText().equals("")) {
+						JOptionPane.showMessageDialog(null, "Please Fill the Description space");
+						return;
+					}
+					if (i_imagepath.getText().equals("")) {
+						JOptionPane.showMessageDialog(null, "Please select a photo");
+						return;
+					}
+
+					Hotel hotel = new Hotel();
+					hotel.setIdHotel(hotelrow.getIdHotel());
+					hotel.setDescription(i_hoteldescription.getText());
+					hotel.setName(i_hotelname.getText());
+					hotel.setCapacity((Integer) i_hotelcapacity.getValue());
+					hotel.setResort(
+							ResortBusinessDelegate.findResortByLabel(i_hotel_combo.getSelectedItem().toString()));
+
+					File file = new File(image);
+					byte[] bFile = new byte[(int) file.length()];
+
+					try {
+						FileInputStream fileInputStream = new FileInputStream(file);
+						fileInputStream.read(bFile);
+						fileInputStream.close();
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+					hotel.setImage(bFile);
+
+					try {
+						hotelDelegate.updateHotel(hotel);
+						i_table_hotel.setModel(hotelmodel.hotelModel());
+					} catch (SQLException | IOException | NamingException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+				} else {
+					JOptionPane.showMessageDialog(null, "Please select a hotel to modify");
+				}
+			}
+		});
+		tableClth.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int index = tableClth.getSelectedRow();
+				ClotheModel clotheModel;
+				try {
+					clotheModel = new ClotheModel();
+					rowClothes = clotheModel.getClotheList().get(index);
+				} catch (NamingException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				FileOutputStream fos;
+				try {
+					fos = new FileOutputStream("src//main//resources//imgs//clth.jpg");
+					fos.write(rowClothes.getImage());
+					fos.close();
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+				ImageIcon imgThisImg1 = new ImageIcon("src//main//resources//imgs//clth.jpg");
+				Image image = imgThisImg1.getImage(); // transform it
+				Image newimg = image.getScaledInstance(150, 130, java.awt.Image.SCALE_SMOOTH); // scale
+																								// it
+																								// the
+																								// smooth
+																								// way
+				ImageIcon imgThisImg = new ImageIcon(newimg); // transform
+																// it
+																// back
+				lblImgClth.setIcon(imgThisImg);
+				imgThisImg.getImage().flush();
+				txtNameClth.setText(rowClothes.getName());
+				txtDescClth.setText(rowClothes.getDescription());
+				txtPriceClth.setText((Float.toString(rowClothes.getPrice())));
+				txtDealClth.setText((Float.toString(rowClothes.getDeal())));
+				txtTypeClth.setText(rowClothes.getType());
+				RequiredFieldNameClth.setVisible(false);
+				RequiredFieldDescClth.setVisible(false);
+				RequiredFieldPriceClth.setVisible(false);
+				RequiredFieldTypeClth.setVisible(false);
+				RequiredFieldDealClth.setVisible(false);
+			}
+		});
+		i_table_hotel.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+
+				int index = i_table_hotel.getSelectedRow();
+				hotelrow = hotelmodel.hotellist.get(index);
+
+				try {
+					FileOutputStream fos = new FileOutputStream("src//main//resources//imgs//hotel.jpg");
+					fos.write(hotelrow.getImage());
+					fos.close();
+					ImageIcon imgThisImg1 = new ImageIcon("src//main//resources//imgs//hotel.jpg");
+					Image image = imgThisImg1.getImage(); // transform it
+					Image newimg = image.getScaledInstance(150, 130, java.awt.Image.SCALE_SMOOTH); // scale
+																									// it
+																									// the
+																									// smooth
+																									// way
+					ImageIcon imgThisImg = new ImageIcon(newimg); // transform
+																	// it back
+					i_imgdisplay.setIcon(imgThisImg);
+					imgThisImg.getImage().flush();
+
+					// modify table
+
+					i_hotelname.setText(hotelrow.getName());
+					i_hoteldescription.setText(hotelrow.getDescription());
+					i_hotelcapacity.setValue(hotelrow.getCapacity());
+
+					// end modif
+
+				} catch (Exception e3) {
+					e3.printStackTrace();
+				}
+			}
+
+		});
+		EventAddPicture.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser ch = new JFileChooser();
+				ch.showOpenDialog(null);
+				File f = ch.getSelectedFile();
+				EventImage = f.getAbsolutePath();
+
+				EventPicturePath.setText(EventImage);
+
+			}
+		});
+		managerProfilePanel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				try {
+					FileOutputStream fos = new FileOutputStream("src//main//resources//imgs//user.jpg");
+					fos.write(Authentification.userConnected.getPhoto());
+					fos.close();
+					ImageIcon imgThisImg2 = new ImageIcon("src//main//resources//imgs//user.jpg");
+					Image h_image = imgThisImg2.getImage(); // transform it
+					Image h_newimg = h_image.getScaledInstance(150, 130, java.awt.Image.SCALE_SMOOTH); // scale
+																										// it
+																										// the
+																										// smooth
+																										// way
+					ImageIcon imgThisImg3 = new ImageIcon(h_newimg); // transform
+																		// it
+																		// back
+					h_lbl_image.setIcon(imgThisImg3);
+					imgThisImg2.getImage().flush();
+				} catch (Exception e1) {
+					// System.out.println("image vide" + e1);
+				}
+			}
+		});
+		i_pi_add.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (i_pi_name.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Please Fill the name space");
+					return;
+				}
+
+				if (i_pi_description.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Please Fill the description space");
+					return;
+				}
+				if (i_pi_path.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Please select a photo");
+					return;
+				}
+
+				for (int i = 0; i < pistemodel.getAll().size(); i++) {
+
+					if (i_pi_name.getText().equals(pistemodel.getAll().get(i).getName())) {
+						JOptionPane.showMessageDialog(null, "a Piste with that name already exists");
+						return;
+
+					}
+
+				}
+
+				Piste piste = new Piste();
+				piste.setDescription(i_pi_description.getText());
+				piste.setName(i_pi_name.getText());
+				piste.setType(i_pi_typecombo.getSelectedItem().toString());
+				piste.setResort(
+						ResortBusinessDelegate.findResortByLabel(i_pi_resortcombo.getSelectedItem().toString()));
+
+				File file = new File(image);
+				byte[] bFile = new byte[(int) file.length()];
+
+				try {
+					FileInputStream fileInputStream = new FileInputStream(file);
+					fileInputStream.read(bFile);
+					fileInputStream.close();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+				piste.setImage(bFile);
+
+				try {
+					pisteDelegate.addPiste(piste);
+
+					i_pi_table.setModel(pistemodel.pisteModel());
+				} catch (SQLException | IOException | NamingException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+
+		});
+		i_pi_table.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+
+				int pi_index = i_pi_table.getSelectedRow();
+				pirow = pistemodel.pistelist.get(pi_index);
+
+				try {
+					FileOutputStream fos = new FileOutputStream("src//main//resources//imgs//piste.jpg");
+					fos.write(pirow.getImage());
+					fos.close();
+					ImageIcon imgThisImg1 = new ImageIcon("src//main//resources//imgs//piste.jpg");
+					Image image = imgThisImg1.getImage(); // transform it
+					Image newimg = image.getScaledInstance(150, 130, java.awt.Image.SCALE_SMOOTH); // scale
+																									// it
+																									// the
+																									// smooth
+																									// way
+					ImageIcon imgThisImg = new ImageIcon(newimg); // transform
+																	// it back
+					i_pi_image.setIcon(imgThisImg);
+					imgThisImg.getImage().flush();
+
+					// modify table
+					if (pirow.getType().equals("Training"))
+						i_pi_typecombo.setSelectedIndex(0);
+					if (pirow.getType().equals("Daily Activities"))
+						i_pi_typecombo.setSelectedIndex(1);
+
+					i_pi_description.setText(pirow.getDescription());
+					i_pi_name.setText(pirow.getName());
+
+					// end modif
+
+				} catch (Exception e3) {
+					e3.printStackTrace();
+
+				}
+
+			}
+
+		});
+
+		i_chooseimage.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				JFileChooser ch = new JFileChooser();
+				ch.showOpenDialog(null);
+				File f = ch.getSelectedFile();
+				if (f != null) {
+					image = f.getAbsolutePath();
+
+					i_imagepath.setText(image);
+				}
+
+				else {
+
+					image = "src//main//resources//imgs//defaulthotel.jpg";
+					i_imagepath.setText(image);
+				}
+
+			}
+
 		});
 		editStore.addActionListener(new ActionListener() {
 
@@ -3679,8 +3703,8 @@ public class HomeManager {
 
 			}
 		});
-		hotelmodel.fillResortComboBox(i_hotel_combo);
-		pistemodel.fillResortComboBox(i_pi_resortcombo);
+		// hotelmodel.fillResortComboBox(i_hotel_combo);
+		// pistemodel.fillResortComboBox(i_pi_resortcombo);
 	}
 
 	public void fillCbResort() throws NamingException {
@@ -3810,6 +3834,7 @@ public class HomeManager {
 		cbx_lib.addItem("Japan");
 
 	}
+
 	private void filter(String query) {
 		DefaultTableModel TableModel = (DefaultTableModel) EventTable.getModel();
 		TableRowSorter<DefaultTableModel> tr = new TableRowSorter<DefaultTableModel>(TableModel);
@@ -3826,19 +3851,16 @@ public class HomeManager {
 
 	}
 
-	private void CreatePdf(String TrainingNamePdf,String TrainingDescriptionPdf,String TrainingStartingPdf ,String TrainingEndingPdf) {
+	private void CreatePdf(String TrainingNamePdf, String TrainingDescriptionPdf, String TrainingStartingPdf,
+			String TrainingEndingPdf) {
 		try {
 
-			String fileName = "TrainingFile.pdf"; 
-		
-
+			String fileName = "TrainingFile.pdf";
 
 			PDDocument doc = new PDDocument();
 			PDPage page = new PDPage();
-			PDImageXObject pdImage = PDImageXObject.createFromFile("H:/ski-icon-web1.png",doc);
+			PDImageXObject pdImage = PDImageXObject.createFromFile("H:/ski-icon-web1.png", doc);
 			doc.addPage(page);
-           
-
 
 			PDPageContentStream content = new PDPageContentStream(doc, page);
 
@@ -3847,43 +3869,41 @@ public class HomeManager {
 			content.moveTextPositionByAmount(220, 750);
 			content.drawString("TRAINING FORM ");
 			content.endText();
-			
-			content.beginText();
-	        content.setFont(PDType1Font.TIMES_ROMAN, 16);
-	        content.moveTextPositionByAmount(80, 700);
-	        content.drawString("TRAINING NAME : " +TrainingNamePdf);
-	        content.endText();
 
-	        content.beginText();
-	        content.setFont(PDType1Font.TIMES_ROMAN, 16);
-	        content.moveTextPositionByAmount(80,650);
-	        content.drawString("TRAINING DESCRIPTION : " +TrainingDescriptionPdf);
-	        content.endText();
-	        
-	        content.beginText();
-	        content.setFont(PDType1Font.TIMES_ROMAN, 16);
-	        content.moveTextPositionByAmount(80,600);
-	        content.drawString("STARTING DATE : " +TrainingStartingPdf);
-	        content.endText();
-	        
-	        content.beginText();
-	        content.setFont(PDType1Font.TIMES_ROMAN, 16);
-	        content.moveTextPositionByAmount(80,550);
-	        content.drawString("ENDING DATE : " +TrainingEndingPdf);
-	        content.endText();
-	        
-	        content.drawImage(pdImage, 120, 250);
-	        
+			content.beginText();
+			content.setFont(PDType1Font.TIMES_ROMAN, 16);
+			content.moveTextPositionByAmount(80, 700);
+			content.drawString("TRAINING NAME : " + TrainingNamePdf);
+			content.endText();
+
+			content.beginText();
+			content.setFont(PDType1Font.TIMES_ROMAN, 16);
+			content.moveTextPositionByAmount(80, 650);
+			content.drawString("TRAINING DESCRIPTION : " + TrainingDescriptionPdf);
+			content.endText();
+
+			content.beginText();
+			content.setFont(PDType1Font.TIMES_ROMAN, 16);
+			content.moveTextPositionByAmount(80, 600);
+			content.drawString("STARTING DATE : " + TrainingStartingPdf);
+			content.endText();
+
+			content.beginText();
+			content.setFont(PDType1Font.TIMES_ROMAN, 16);
+			content.moveTextPositionByAmount(80, 550);
+			content.drawString("ENDING DATE : " + TrainingEndingPdf);
+			content.endText();
+
+			content.drawImage(pdImage, 120, 250);
+
 			content.close();
 			doc.save(fileName);
 			doc.close();
-
 
 		} catch (IOException | CacheException e) {
 
 			System.out.println(e.getMessage());
 
 		}
-		}
-
+	}
 }

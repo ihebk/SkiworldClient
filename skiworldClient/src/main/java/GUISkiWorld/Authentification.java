@@ -147,7 +147,7 @@ public class Authentification {
 		JLabel lblNewLabel = new JLabel("");
 		lblNewLabel.setFont(new Font("MS Reference Sans Serif", Font.BOLD, 18));
 		lblNewLabel.setBackground(UIManager.getColor("Button.light"));
-		lblNewLabel.setIcon(new ImageIcon("C:\\Users\\Haythem\\Desktop\\authentification3.png"));
+		lblNewLabel.setIcon(new ImageIcon("src\\main\\resources\\authentification3.png"));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setBounds(0, 0, 718, 546);
 		panel.add(lblNewLabel);
